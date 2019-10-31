@@ -14,7 +14,7 @@ library(formattable)
 library(RColorBrewer)
 
 # DEFINE THE ORDER OF YOUR LABELS!!!
-TheLabels__ = c("p53_2W","p53_aga","p53_ctrl","p53_mdivi_2W","p53_mdivi_aga","p53_mdivi_ctrl","KRAS_2W","KRAS_aga","KRAS_ctrl","KRAS_mdivi_2W","KRAS_mdivi_aga","KRAS_mdivi_ctrl")
+TheLabels__ = c("p53_2W","p53_ctrl","p53_mdivi_2W","p53_mdivi_ctrl","KRAS_2W","KRAS_ctrl","KRAS_mdivi_2W","KRAS_mdivi_ctrl")
 
 
 transparent <- rgb(0, 0, 0, 0)
@@ -28,7 +28,7 @@ Summary <- read.csv(paste(GnetsFolder,"output-summary.csv",sep=""))
 Summary$Condition <- as.character(Summary$Condition)
 Summary$Condition <- factor(Summary$Condition, levels=unique(Summary$Condition))
 
-avgSummary <- aggregate(data=Summary,.~Condition,FUN=median)
+avgSummary <- aggregate(data=Summary,.~Condition,FUN=mean)
 stdSummary <- aggregate(data=Summary,.~Condition,FUN=sd)
 names(stdSummary)[-c(1,2)] <- paste(names(stdSummary)[-c(1,2)],'_sd',sep='')
 
