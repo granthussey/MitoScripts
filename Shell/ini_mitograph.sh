@@ -53,13 +53,16 @@ mkdir $SEGDIR
 
 # Determine the number of folders to process
 NUM_DIR=$(ls $1 -l | grep -v ^l | wc -l)
-echo "You have " "$NUM_DIR" " number of directories."
+RUN_UNTIL="$(($NUM_DIR-1))"
+echo "You have " "$RUN_UNTIL" " number of directories."
 
 # Get a list of directories to pass to program
 DIRS=($1*/)
 
 # Initialize the array job for MitoGraph based nDir to analyze
-sbatch --array=0-$NUM_DIR ~/MitoScripts/Shell/run_mitograph.sh "${DIRS[@]}"
+
+
+sbatch --array=0-$RUN_UNTIL ~/MitoScripts/Shell/run_mitograph.sh "${DIRS[@]}" $SEGDIR
 
 # Copy the results to a results directory for RStudio analysis
 #mkdir /gpfs/scratch/gh1431/Results/Segmented_$BASEDIR
