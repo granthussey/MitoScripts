@@ -31,11 +31,10 @@ BASEDIR=$(basename "$1")
 echo "BASEDIR: "$BASEDIR
 
 # Make a directory in the results folder where all things will be saved.
-mkdir /gpfs/scratch/gh1431/Results/$BASEDIR
 mkdir /gpfs/scratch/gh1431/Results/$BASEDIR"_Batch"
 
 # Copy data to the "results" folder
-cp -r $1 /gpfs/scratch/gh1431/Results/$BASEDIR
+cp -r $1 /gpfs/scratch/gh1431/Results/
 
 # Make a new directory with "batch" images (i.e. not in folders)
 find $1 -type f -print0 | xargs -0 cp -t $1/../$BASEDIR"_Batch"
@@ -45,7 +44,7 @@ NUM_DIR=$(ls $1 -l | grep -v ^l | wc -l)
 echo "You have " "$NUM_DIR" " number of directories."
 
 # Get a list of directories to pass to program
-DIRS=(/gpfs/scratch/gh1431/Results/$BASEDIR/*/)
+DIRS=(/gpfs/scratch/gh1431/Results/$BASENAME/*/)
 
 # Initialize the array job for MitoGraph based nDir to analyze
 sbatch --array=1-$NUM_DIR ~/scripts/MitoGraph/run_mitograph.sh "${DIRS[@]}"
