@@ -125,7 +125,10 @@ for (roi = 0; roi < roiManager("count"); roi++) {
 	_FileName = _FileName[0];
 
 	open(_FileName + ".tif");
+	TIFF = getImageID;
+	run("Duplicate...", "duplicate channels=1");
 	ORIGINAL = getImageID;
+	close(TIFF);
 
 	run("Restore Selection");
 
