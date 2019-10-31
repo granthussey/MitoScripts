@@ -213,3 +213,6 @@ zsdoc/data
 !/tests/_output/.gitkeep
 
 # End of https://www.gitignore.io/api/r,zsh,c++,python
+
+# Others
+*.DS_Store
