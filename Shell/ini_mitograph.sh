@@ -28,18 +28,28 @@ hostname; date
 
 # Get the name of the base directory for naming purposes
 BASEDIR=$(basename "$1")
+
 echo "BASEDIR: "$BASEDIR
 
-BATCHDIR=/gpfs/scratch/gh1431/Results/$BASEDIR"_Batch"
+# Make a directory for all of the data!
+mkdir /gpfs/scratch/gh1431/Results/$BASEDIR
 
-# Make a directory in the results folder where all things will be saved.
+BATCHDIR=/gpfs/scratch/gh1431/Results/$BASEDIR/Batch
+ORIGDIR=/gpfs/scratch/gh1431/Results/$BASEDIR/Orig
+SEGDIR=/gpfs/scratch/gh1431/results/$BASEDIR/Segmented
+
+# Make results directories.
+
+# Batch of .tiff files
 mkdir $BATCHDIR
-
-# Copy data to the "results" folder
-cp -r $1 /gpfs/scratch/gh1431/Results/
-
-# Make a new directory with "batch" images (i.e. not in folders)
 find $1 -type f -print0 | xargs -0 cp -t $BATCHDIR
+
+# Original form of files in folders
+mkdir $ORIGDIR
+cp -r $1 $ORIGDIR
+
+# Segmented batch folder
+mkdir $SEGDIR
 
 # Determine the number of folders to process
 NUM_DIR=$(ls $1 -l | grep -v ^l | wc -l)
@@ -49,15 +59,8 @@ echo "You have " "$NUM_DIR" " number of directories."
 DIRS=($1*/)
 
 # Initialize the array job for MitoGraph based nDir to analyze
-sbatch --array=1-$NUM_DIR ~/MitoScripts/Shell/run_mitograph.sh "${DIRS[@]}"
+sbatch --array=0-$NUM_DIR ~/MitoScripts/Shell/run_mitograph.sh "${DIRS[@]}" 
 
 # Copy the results to a results directory for RStudio analysis
-mkdir /gpfs/scratch/gh1431/Results/Segmented_$BASEDIR
-find $1 -type f -print0 | xargs -0 cp -t /gpfs/scratch/gh1431/Results/Segmented_$BASEDIR
-
-
-echo "BATCHDIR: " $BATCHDIR
-
-echo /gpfs/scratch/gh1431/Results/$BASENAME/
-echo /gpfs/scratch/gh1431/Results/$BASENAME/*
-echo $DIRS
+#mkdir /gpfs/scratch/gh1431/Results/Segmented_$BASEDIR
+#find $1 -type f -print0 | xargs -0 cp -t /gpfs/scratch/gh1431/Results/Segmented_$BASEDIR
