@@ -28,7 +28,7 @@ Summary <- read.csv(paste(GnetsFolder,"output-summary.csv",sep=""))
 Summary$Condition <- as.character(Summary$Condition)
 Summary$Condition <- factor(Summary$Condition, levels=unique(Summary$Condition))
 
-avgSummary <- aggregate(data=Summary,.~Condition,FUN=mean)
+avgSummary <- aggregate(data=Summary,.~Condition,FUN=median)
 stdSummary <- aggregate(data=Summary,.~Condition,FUN=sd)
 names(stdSummary)[-c(1,2)] <- paste(names(stdSummary)[-c(1,2)],'_sd',sep='')
 
