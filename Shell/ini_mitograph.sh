@@ -52,15 +52,14 @@ cp -r $1 $ORIGDIR
 mkdir $SEGDIR
 
 # Determine the number of folders to process
-NUM_DIR=$(ls $1 -l | grep -v ^l | wc -l)
-RUN_UNTIL="$(($NUM_DIR-1))"
+NUM_DIR=$(ls $1 -l | grep -v ^l | wc -l) # this includes  .. and .
+RUN_UNTIL="$(($NUM_DIR-2))"              # this number excludes  .. and .
 echo "You have " "$RUN_UNTIL" " number of directories."
 
 # Get a list of directories to pass to program
 DIRS=($1*/)
 
 # Initialize the array job for MitoGraph based nDir to analyze
-
 
 sbatch --array=0-$RUN_UNTIL ~/MitoScripts/Shell/run_mitograph.sh "${DIRS[@]}" $SEGDIR
 
