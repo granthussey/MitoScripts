@@ -46,7 +46,7 @@ NUM_DIR=$(ls $1 -l | grep -v ^l | wc -l)
 echo "You have " "$NUM_DIR" " number of directories."
 
 # Get a list of directories to pass to program
-DIRS=(/gpfs/scratch/gh1431/Results/$BASENAME/*)
+DIRS=($1*/)
 
 # Initialize the array job for MitoGraph based nDir to analyze
 sbatch --array=1-$NUM_DIR ~/MitoScripts/Shell/run_mitograph.sh "${DIRS[@]}"
@@ -57,5 +57,7 @@ find $1 -type f -print0 | xargs -0 cp -t /gpfs/scratch/gh1431/Results/Segmented_
 
 
 echo "BATCHDIR: " $BATCHDIR
+
+echo /gpfs/scratch/gh1431/Results/$BASENAME/
 echo /gpfs/scratch/gh1431/Results/$BASENAME/*
-echo
+echo $DIRS
