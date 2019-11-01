@@ -9,7 +9,7 @@ library(igraph)
 #
 # Run with Command+Option+r
 
-GnetsFolder <- "E:/GrantHussey_Experiments/Mdivi_Results"
+GnetsFolder <- getwd()
 
 RawData <- NULL
 Summary <- NULL

@@ -216,3 +216,4 @@ zsdoc/data
 
 # Others
 *.DS_Store
+*.Rproj
