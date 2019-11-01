@@ -1,5 +1,10 @@
 
 
+// Some directions
+// Comment out which cell cropping you do not want
+
+
+
 Root = getDirectory("Choose a Directory");
 
 CropCellsFolder_NOGaussNoise(Root);
@@ -89,7 +94,8 @@ selectImage(MAXP); close();
 
 setBatchMode(false);
 
-print("Cell croppping is complete.");
+print("Cell croppping NoGauss is complete.");
+close("*");
 
 
 
@@ -180,6 +186,7 @@ selectImage(MAXP); close();
 
 setBatchMode(false);
 
-print("Cell croppping is complete.");
+print("Cell croppping Gauss is complete.");
+close("*");
 
 }

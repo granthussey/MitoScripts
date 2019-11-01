@@ -52,9 +52,10 @@ cp -r $1 $ORIGDIR
 mkdir $SEGDIR
 
 # Determine the number of folders to process
-NUM_DIR=$(ls $1 -l | grep -v ^l | wc -l) # this includes  .. and .
-RUN_UNTIL="$(($NUM_DIR-2))"              # this number excludes  .. and .
-echo "You have " "$RUN_UNTIL" " number of directories."
+FULL_nDIRS=$(ls $1 -l | grep -v ^l | wc -l) # this includes  .. and .
+FOR_PRINTING="$(($FULL_nDIRS-1))"           # just for the message below
+RUN_UNTIL="$(($FULL_nDIRS-2))"              # this number excludes  .. and .
+echo "You have " "$FOR_PRINTING" " number of directories."
 
 # Get a list of directories to pass to program
 DIRS=($1*/)
