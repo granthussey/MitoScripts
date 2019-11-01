@@ -1,8 +1,6 @@
 
-
 // Some directions
 // Comment out which cell cropping you do not want
-
 
 
 Root = getDirectory("Choose a Directory");
