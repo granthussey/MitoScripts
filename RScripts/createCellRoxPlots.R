@@ -22,7 +22,7 @@ transparent <- rgb(0, 0, 0, 0)
 # Replace with path specific for your data, make sure to include final "/" after the name
 DataFolder <- getwd()
 
-Summary <- read.csv(paste(DataFolder,"/MultiTest.csv",sep=""))
+Summary <- read.csv(paste(DataFolder,"/DivideTest.csv",sep=""))
 
 # Conditions will appear in the same order as in the CSV summary file
 Summary$Condition <- as.character(Summary$Condition)
@@ -51,7 +51,7 @@ PlotsToBeMade <- c("Total_Connected_Components_Norm_to_Length_um","Avg_Edge_Leng
                   "PHI","Total_Connected_Components_Norm_to_Length_um",
                   "Volume_from_voxels_um3", "Average_width_um")
 
-#AxisLabels <- c("Total Connected Components\nNormalized to Total Length (um)","Average Edge Length (um)",
+AxisLabels <- c("Total Connected Components\nNormalized to Total Length (um)","Average Edge Length (um)",
              #   "Average Degree","Total Edge #\nNormalized to Total Length (um)",
              #   "PHI","Total Connected Components\nNormalized to Total Length (um)",
              #   "Volume from Voxels (um3)","Average Mitochondrial Width (um)")

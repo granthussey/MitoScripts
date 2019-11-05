@@ -9,7 +9,7 @@ File.makeDirectory(_ImagingDir + "CellRox_Results/");
 
 		_Prefixes = get_image_prefixes(_PNGDir);
 
-			for (i=0; i<3; i++) {
+			for (i=0; i<_Prefixes.length; i++) {
 
 				open(_PNGDir + _Prefixes[i] + ".png");
 				MASK = getImageID;
@@ -22,17 +22,11 @@ File.makeDirectory(_ImagingDir + "CellRox_Results/");
 				MAXP = getImageID;
 				close(CELL);
 
-				imageCalculator("Divide create",MAXP,MASK);
-				RESULT = getImageID;
-				close(MASK);
-				close(MAXP);
-
-				selectImage(RESULT);
-				run("Multiply...", "value=255");
-				run("Enhance Contrast", "saturated=0.35");
-
-				selectImage(RESULT);
-				run("Set Measurements...", "area mean min integrated median display redirect=None decimal=3");
+				selectImage(MAXP);
+				
+				curFilename = "SUM_" + _Prefixes[i] + ".tif";
+				arguement = "area mean min integrated median display redirect=" + curFilename + " decimal=3";
+				run("Set Measurements...", arguement);
 				run("Measure");
 
 				close("*");
