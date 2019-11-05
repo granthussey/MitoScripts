@@ -1,14 +1,5 @@
 
 
-
-
-imageCalculator("Multiply create", "SUM_CroppedOutput","MitoGraph_Output");
-selectWindow("Result of SUM_CroppedOutput");
-run("Divide...", "value=255");
-//run("Brightness/Contrast...");
-run("Enhance Contrast", "saturated=0.35");
-
-
 _ImagingDir = getDirectory("Choose imaging dir");
 _PNGDir = _ImagingDir + "PNG/"
 _CellDir = _ImagingDir + "Cell/"
@@ -31,7 +22,7 @@ File.makeDirectory(_ImagingDir + "CellRox_Results");
 				MAXP = getImageID;
 				close(CELL);
 
-				imageCalculator("Multiply create", "MAXP","MASK");
+				imageCalculator("Multiply create", MAXP,MASK);
 				RESULT = getImageID;
 				close(MASK);
 				close(MAXP);
@@ -39,6 +30,11 @@ File.makeDirectory(_ImagingDir + "CellRox_Results");
 				selectImage(RESULT);
 				run("Divide...", "value=255");
 				run("Enhance Contrast", "saturated=0.35");
+
+				selectImage(RESULT);
+				
+
+			}
 
         function get_image_prefixes(theDir) {
 
