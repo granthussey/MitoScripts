@@ -4,8 +4,8 @@ _ImagingDir = getDirectory("Choose imaging dir");
 _PNGDir = _ImagingDir + "PNG/"
 _CellDir = _ImagingDir + "Cell/"
 
-File.makeDirectory(_ImagingDir + "CellRox_Masks");
-File.makeDirectory(_ImagingDir + "CellRox_Results");
+File.makeDirectory(_ImagingDir + "CellRox_Masks/");
+File.makeDirectory(_ImagingDir + "CellRox_Results/");
 
 		_Prefixes = get_image_prefixes(_PNGDir);
 
@@ -22,21 +22,24 @@ File.makeDirectory(_ImagingDir + "CellRox_Results");
 				MAXP = getImageID;
 				close(CELL);
 
-				imageCalculator("Multiply create", MAXP,MASK);
+				imageCalculator("Divide create",MAXP,MASK);
 				RESULT = getImageID;
 				close(MASK);
 				close(MAXP);
 
 				selectImage(RESULT);
-				run("Divide...", "value=255");
+				run("Multiply...", "value=255");
 				run("Enhance Contrast", "saturated=0.35");
 
 				selectImage(RESULT);
 				run("Set Measurements...", "area mean min integrated median display redirect=None decimal=3");
+				run("Measure");
 
-
+				close("*");
 
 			}
+
+			saveAs("Results",_ImagingDir + "CellRox_Results/" + "DivideTest.csv");
 
         function get_image_prefixes(theDir) {
 
