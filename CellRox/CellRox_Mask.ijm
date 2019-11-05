@@ -32,7 +32,9 @@ File.makeDirectory(_ImagingDir + "CellRox_Results");
 				run("Enhance Contrast", "saturated=0.35");
 
 				selectImage(RESULT);
-				
+				run("Set Measurements...", "area mean min integrated median display redirect=None decimal=3");
+
+
 
 			}
 
