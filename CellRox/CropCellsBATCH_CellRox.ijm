@@ -8,7 +8,7 @@ _RootFolder = getDirectory("Choose a Directory");
 _xy = 512'
 
 // Creating a directory where the files are saved
-_SaveDir = _RootFolder + "CellRox";
+_SaveDir = _RootFolder + "CellRox_Batch";
 File.makeDirectory(_SaveDir);
 
 
@@ -71,10 +71,7 @@ for (roi = 0; roi < roiManager("count"); roi++) {
 	run("Select None");
 	resetMinAndMax();
 
-		EncapsulatedDir = _RootFolder + "CellRox/" + _FileName + "_" + IJ.pad(roi,3);
-	File.makeDirectory(EncapsulatedDir);
-
-	save(EncapsulatedDir + "/" + _FileName + "_" + IJ.pad(roi,3) + ".tif");
+	save(_SaveDir + "/" + _FileName + "_" + IJ.pad(roi,3) + ".tif");
 
 	selectImage(CELL); close();
 	selectImage(ORIGINAL); close();
@@ -85,5 +82,5 @@ selectImage(MAXP); close();
 
 setBatchMode(false);
 
-print("Cell croppping CellRox is complete.");
+print("Cell croppping CellRoxBatch is complete.");
 close("*");
