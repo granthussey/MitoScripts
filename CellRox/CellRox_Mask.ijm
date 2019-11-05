@@ -9,13 +9,12 @@ run("Divide...", "value=255");
 run("Enhance Contrast", "saturated=0.35");
 
 
+_ImagingDir = getDirectory("Choose imaging dir");
+_PNGDir = _ImagingDir + "PNG/"
+_CellDir = _ImagingDir + "Cell/"
 
-_OutDir = getDirectory("Choose output directory");
-_PNGDir = getDirectory("Choose PNG directory");
-_CellDir = getDirectory("Choose cell image directory");
-
-File.makeDirectory(_RootFolder + "CellRox_Masks");
-File.makeDirectory(_RootFolder + "CellRox_Results");
+File.makeDirectory(_ImagingDir + "CellRox_Masks");
+File.makeDirectory(_ImagingDir + "CellRox_Results");
 
 		_Prefixes = get_image_prefixes(_PNGDir);
 
