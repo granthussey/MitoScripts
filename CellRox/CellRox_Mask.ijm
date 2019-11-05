@@ -2,76 +2,48 @@
 
 
 
-_RootFolder = getDirectory("Choose a Directory");
+imageCalculator("Multiply create", "SUM_CroppedOutput","MitoGraph_Output");
+selectWindow("Result of SUM_CroppedOutput");
+run("Divide...", "value=255");
+//run("Brightness/Contrast...");
+run("Enhance Contrast", "saturated=0.35");
 
-File.makeDirectory(_RootFolder + "CellRox_MaskedImages");
 
-		_Prefixes = get_image_prefixes();
 
-		nImage = _Prefixes.length
-		iImage = 0;
+_OutDir = getDirectory("Choose output directory");
+_PNGDir = getDirectory("Choose PNG directory");
+_CellDir = getDirectory("Choose cell image directory");
 
-			n = 0;
+File.makeDirectory(_RootFolder + "CellRox_Masks");
+File.makeDirectory(_RootFolder + "CellRox_Results");
 
-			for (i=0; i<_Prefixes.length; i++) {
+		_Prefixes = get_image_prefixes(_PNGDir);
 
-				open(_No_Gauss_Cell_Dir + _Prefixes[i] + ".tif");
-				run("Z Project...", "start=1 stop=500 projection=[Max Intensity]");
-				selectWindow(_Prefixes[i] + ".tif");
-				close();
-				selectWindow("MAX_" + _Prefixes[i] + ".tif");
-				run("8-bit");
+			for (i=0; i<3; i++) {
+
+				open(_PNGDir + _Prefixes[i] + ".png");
+				MASK = getImageID;
+
+				open(_CellDir + _Prefixes[i] + ".tif");
+				CELL = getImageID;
+				selectImage(CELL);
+
+				run("Z Project...", "projection=[Sum Slices]");
+				MAXP = getImageID;
+				close(CELL);
+
+				imageCalculator("Multiply create", "MAXP","MASK");
+				RESULT = getImageID;
+				close(MASK);
+				close(MAXP);
+
+				selectImage(RESULT);
+				run("Divide...", "value=255");
 				run("Enhance Contrast", "saturated=0.35");
 
+        function get_image_prefixes(theDir) {
 
-
-				selectWindow("MAX_" + _Prefixes[i] + "-1.tif");
-				run("8-bit");
-				run("Enhance Contrast", "saturated=0.35");
-
-				open(_Gauss_PNG_Dir + _Prefixes[i] + ".png");
-				run("Enhance Contrast", "saturated=0.35");
-
-				n++ ;
-
-				if (n == 4) {
-
-					n = 0;
-					iMontage++;
-
-					run("Images to Stack", "name=Stack title=[] use");
-					run("Make Montage...", "columns=4 rows=4 scale=1 font=20 label");
-					close("\\Others");
-
-					save(_ImagingDir + "Montages/" + iMontage +  ".tif");
-					close("*");
-
-					}
-
-				else{}
-
-				if (i == _Prefixes.length-1) {n = 0;
-					iMontage++;
-
-					run("Images to Stack", "name=Stack title=[] use");
-					run("Make Montage...", "columns=5 rows=4 scale=1 font=20 label");
-
-					save(_ImagingDir + "Montages/" + iMontage +  ".tif");
-					close("*");
-
-					}
-
-					else{}
-			}
-
-			print("A total of " + nMontages + " montages were created.");
-
-		}
-
-        function get_image_prefixes() {
-
-			_RootFolder = getDirectory("Choose a directory with prefixes");
-			_List = getFileList(_RootFolder);
+			_List = getFileList(theDir);
 
 			_Prefixes = newArray(_List.length)
 			for (i=0; i<_List.length; i++) {
