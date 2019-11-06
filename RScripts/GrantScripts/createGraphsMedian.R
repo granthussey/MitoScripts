@@ -8,11 +8,13 @@ library(RColorBrewer)
 
 # DEFINE THE ORDER OF YOUR LABELS!!!
 DataLabels = c("p53_2W","p53_ctrl","p53_mdivi_2W","p53_mdivi_ctrl","KRAS_2W","KRAS_ctrl","KRAS_mdivi_2W","KRAS_mdivi_ctrl")
+DataLabels = c("p53_2W","p53_aga","p53_ctrl","p53_mdivi_2W","p53_mdivi_aga","p53_mdivi_ctrl","KRAS_2W",'KRAS_aga',"KRAS_ctrl","KRAS_mdivi_2W",'KRAS_mdivi_aga',"KRAS_mdivi_ctrl")
+
 
 transparent <- rgb(0, 0, 0, 0)
 
 # Make sure you set your WD to where your MitoGraph output is
-GnetsFolder <- getwd()
+GnetsFolder <- '/Users/granthussey/Lab/10_23_19_MdiviPilotWork/NoGauss/'
 
 Summary <- read.csv(paste(GnetsFolder,"output-summary.csv",sep=""))
 
@@ -34,13 +36,13 @@ nc <- length(levels(Summary$Condition))
 getPalette = colorRampPalette(brewer.pal(9, "Set1")) #adjust the last parameter with # colors in the palette & color brewer name
 
 # Here is a loop that creates 4 graphs where the X and Y variable are listed accordingly.
-PlotsToBeMade <- c("Total_Connected_Components_Norm_to_Length_um","Med_Edge_Length_um",
-                   "Med_Degree","Total_Edge_Norm_to_Length_um",
+PlotsToBeMade <- c("Total_Connected_Components_Norm_to_Length_um","Avg_Edge_Length_um",
+                   "Avg_Degree","Total_Edge_Norm_to_Length_um",
                    "PHI","Total_Connected_Components_Norm_to_Length_um",
-                   "Volume_from_voxels_um3", "Med_width_um")
+                   "Volume_from_voxels_um3", "Average_width_um")
 
-AxisLabels <- c("Total Connected Components\nNormalized to Total Length (um)","Med Edge Length (um)",
-                "Med Degree","Total Edge #\nNormalized to Total Length (um)",
+AxisLabels <- c("Total Connected Components\nNormalized to Total Length (um)","Avg Edge Length (um)",
+                "Avg Degree","Total Edge #\nNormalized to Total Length (um)",
                 "PHI","Total Connected Components\nNormalized to Total Length (um)",
                 "Volume from Voxels (um3)","Med Mitochondrial Width (um)")
 
@@ -90,7 +92,7 @@ for (p in seq(1,length(PlotsToBeMade),2)) {
 # SUMMARY CATEGORY BAR CHART
 #
 
-VarNames <- c("PHI", "Med_Edge_Length_um", "Total_Edge_Norm_to_Length_um", "Total_Node_Norm_to_Length_um", "Total_Connected_Components_Norm_to_Length_um", "Free_Ends", "three_way_junction", "four_way_junction", "Med_Degree")
+VarNames <- c("PHI", "Avg_Edge_Length_um", "Total_Edge_Norm_to_Length_um", "Total_Node_Norm_to_Length_um", "Total_Connected_Components_Norm_to_Length_um", "Free_Ends", "three_way_junction", "four_way_junction", "Avg_Degree")
 
 medSummary_long <- melt(medSummary[,-2], id.vars=c("Condition"))
 stdSummary_long <- melt(stdSummary[,-2], id.vars=c("Condition"))
@@ -107,14 +109,14 @@ ggplot(Summary_MED_STD_long, aes(fill = Condition, x = variable, y = value)) +
   geom_errorbar(aes(ymin=value-value_sd, ymax=value+value_sd), position=position_dodge(width = 0.9), width=0.5, color="grey30", size=0.5, show.legend=FALSE) +
   labs(x = "MitoGraph Measurement Metric", y = "Value") +
   scale_x_discrete(labels = c("PHI" = "PHI",
-                              "Med_Edge_Length_um" ="Med Edge\nLength\n(um)",
+                              "Avg_Edge_Length_um" ="Avg Edge\nLength\n(um)",
                               "Total_Edge_Norm_to_Length_um" = "Total\nEdge\n(Norm\nto Length\n(um)",
                               "Total_Node_Norm_to_Length_um" = "Total\nNode\n(Norm\nto Length\n(um)",
                               "Total_Connected_Components_Norm_to_Length_um" = "Connected\nComponents\n(Norm\nto Length\n(um)",
                               "Free_Ends" = "Degree\nDist\nk=1\nfree-ends",
                               "three_way_junction" = "Degree\nDist\nk=3\n3-way\nJunction",
                               "four_way_junction" = "Degree\nDist\nk=4\n4-way\nJunction",
-                              "Med_Degree" = "Med\nDegree")) +
+                              "Avg_Degree" = "Med\nDegree")) +
   theme_bw() +
   theme(axis.text.x = element_text(size = 8, color = "black"),
         panel.grid.major = element_blank(),
@@ -150,14 +152,14 @@ ggplot(Summary_long, aes(fill=Condition, x=variable, y=value)) +
   geom_vline(xintercept = c(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5), colour = "grey65", linetype = "dotted") +
   labs(x = "MitoGraph Measurement Metric", y = "Value") +
   scale_x_discrete(labels = c("PHI" = "PHI",
-                              "Med_Edge_Length_um" ="Med Edge\nLength\n(um)",
+                              "Avg_Edge_Length_um" ="Avg Edge\nLength\n(um)",
                               "Total_Edge_Norm_to_Length_um" = "Total\nEdge\n(Norm\nto Length\n(um)",
                               "Total_Node_Norm_to_Length_um" = "Total\nNode\n(Norm\nto Length\n(um)",
                               "Total_Connected_Components_Norm_to_Length_um" = "Connected\nComponents\n(Norm\nto Length\n(um)",
                               "Free_Ends" = "Degree\nDist\nk=1\nfree-ends",
                               "three_way_junction" = "Degree\nDist\nk=3\n3-way\nJunction",
                               "four_way_junction" = "Degree\nDist\nk=4\n4-way\nJunction",
-                              "Med_Degree" = "Med\nDegree")) +
+                              "Avg_Degree" = "Avg\nDegree")) +
   theme_bw() +
   theme(axis.text.x = element_text(size = 8, color = "black"),
         axis.text.y = element_text(size = 8, color = "black"),

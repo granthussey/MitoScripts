@@ -1,7 +1,7 @@
 library(igraph)
 
 # Set your WD to your MitoGraph Output Folder!
-GnetsFolder <- getwd()
+GnetsFolder <- '/Users/granthussey/Lab/10_23_19_MdiviPilotWork/NoGauss/'
 
 RawData <- NULL
 Summary <- NULL
