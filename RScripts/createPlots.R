@@ -14,13 +14,14 @@ library(formattable)
 library(RColorBrewer)
 
 # DEFINE THE ORDER OF YOUR LABELS!!!
-TheLabels__ = c("p53_2W","p53_ctrl","p53_mdivi_2W","p53_mdivi_ctrl","KRAS_2W","KRAS_ctrl","KRAS_mdivi_2W","KRAS_mdivi_ctrl")
+#TheLabels__ = c("p53_2W","p53_ctrl","p53_mdivi_2W","p53_mdivi_ctrl","KRAS_2W","KRAS_ctrl","KRAS_mdivi_2W","KRAS_mdivi_ctrl")
+TheLabels__ = c("p53_2W","p53_aga","p53_ctrl","p53_mdivi_2W","p53_mdivi_aga","p53_mdivi_ctrl","KRAS_2W",'KRAS_aga',"KRAS_ctrl","KRAS_mdivi_2W",'KRAS_mdivi_aga',"KRAS_mdivi_ctrl")
 
 
 transparent <- rgb(0, 0, 0, 0)
 
 # Replace with path specific for your data, make sure to include final "/" after the name
-GnetsFolder <- getwd()
+GnetsFolder <- '/Users/granthussey/Lab/10_23_19_MdiviPilotWork/NoGauss/'
 
 Summary <- read.csv(paste(GnetsFolder,"output-summary.csv",sep=""))
 
@@ -107,7 +108,7 @@ for (p in seq(1,length(PlotsToBeMade),2)) {
 
   )
 
-  ggsave(paste(GnetsFolder,"Plot-",p,".eps",sep=""), width = 14, height = 16, units = "cm", dpi = 300)
+  ggsave(paste(GnetsFolder,"Plot-",p,"mean_graph.png",sep=""), width = 14, height = 16, units = "cm", dpi = 300)
 
 }
 
@@ -154,7 +155,7 @@ ggplot(Summary_AVG_STD_long, aes(fill = Condition, x = variable, y = value)) +
         legend.text = element_text(size = 12, color = "black")
   )
 
-ggsave(paste(GnetsFolder,"AVG_SD_metrics.eps",sep=""), width = 18, height = 16, units = "cm", dpi = 300)
+ggsave(paste(GnetsFolder,"AVG_SD_metricsmean_graph.png",sep=""), width = 18, height = 16, units = "cm", dpi = 300)
 
 #
 # ALL METRICS BOX and Scatter PLOTS
@@ -198,7 +199,7 @@ ggplot(Summary_long, aes(fill=Condition, x=variable, y=value)) +
         legend.text = element_text(size = 8, color = "black")
   )
 
-ggsave(paste(GnetsFolder,"All_metrics.eps",sep=""), width = 20, height = 16, units = "cm", dpi = 300)
+ggsave(paste(GnetsFolder,"All_metricsmean_graph.png",sep=""), width = 20, height = 16, units = "cm", dpi = 300)
 
 ggplot(Summary, aes(fill = Condition, x = Condition, y = MitoGraph_Connectivity_Score)) +
   stat_boxplot(geom = "errorbar", width = 0.5, colour = "grey15") +
@@ -224,7 +225,7 @@ ggplot(Summary, aes(fill = Condition, x = Condition, y = MitoGraph_Connectivity_
         legend.text = element_text(size = 12, color = "black")
   )
 
-ggsave(paste(GnetsFolder,"MitoGraph_Connectivity_score.eps",sep=""), width = 20, height = 16, units = "cm",
+ggsave(paste(GnetsFolder,"MitoGraph_Connectivity_scoremean_graph.png",sep=""), width = 20, height = 16, units = "cm",
        dpi = 300)
 
 write.table(Summary_AVG_STD_long, file = paste(GnetsFolder,"Summary_AVG_STD.csv",sep=""), sep = ",", quote = FALSE, row.names = F)
