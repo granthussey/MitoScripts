@@ -7,6 +7,8 @@ import os
 # 3. Rename XXX to p53
 # 4. Rename YYY to KRAS
 
+dir = 'E:\GrantHussey_Experiments\2019_10_09_correctMitoTracker_Comp\deconvolve'
+
 def rename_files_in_directory(dir):
 
     cur_names = os.listdir(dir)
