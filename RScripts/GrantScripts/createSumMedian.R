@@ -1,14 +1,6 @@
 library(igraph)
 
-#
-# Save this script in the folder that contains the MitoGraph Gnet files you want to analyze
-#
-# Set working directory to source file location (session -> set working directory -> to source file location)
-#
-# Specify the folder with the gnet files (copy the working directory path to the GnetsFolder location below, ensure it ends in a /
-#
-# Run with Command+Option+r
-
+# Set your WD to your MitoGraph Output Folder!
 GnetsFolder <- getwd()
 
 RawData <- NULL
