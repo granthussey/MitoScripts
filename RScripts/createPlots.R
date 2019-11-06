@@ -14,14 +14,14 @@ library(formattable)
 library(RColorBrewer)
 
 # DEFINE THE ORDER OF YOUR LABELS!!!
-#TheLabels__ = c("p53_2W","p53_ctrl","p53_mdivi_2W","p53_mdivi_ctrl","KRAS_2W","KRAS_ctrl","KRAS_mdivi_2W","KRAS_mdivi_ctrl")
-TheLabels__ = c("p53_2W","p53_aga","p53_ctrl","p53_mdivi_2W","p53_mdivi_aga","p53_mdivi_ctrl","KRAS_2W",'KRAS_aga',"KRAS_ctrl","KRAS_mdivi_2W",'KRAS_mdivi_aga',"KRAS_mdivi_ctrl")
+TheLabels__ = c("p53_2W","p53_ctrl","p53_mdivi_2W","p53_mdivi_ctrl","KRAS_2W","KRAS_ctrl","KRAS_mdivi_2W","KRAS_mdivi_ctrl")
+#TheLabels__ = c("p53_2W","p53_aga","p53_ctrl","p53_mdivi_2W","p53_mdivi_aga","p53_mdivi_ctrl","KRAS_2W",'KRAS_aga',"KRAS_ctrl","KRAS_mdivi_2W",'KRAS_mdivi_aga',"KRAS_mdivi_ctrl")
 
 
 transparent <- rgb(0, 0, 0, 0)
 
 # Replace with path specific for your data, make sure to include final "/" after the name
-GnetsFolder <- '/Users/granthussey/Lab/10_23_19_MdiviPilotWork/NoGauss/'
+GnetsFolder <- getwd()
 
 Summary <- read.csv(paste(GnetsFolder,"output-summary.csv",sep=""))
 
