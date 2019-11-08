@@ -217,3 +217,5 @@ zsdoc/data
 # Others
 *.DS_Store
 *.Rproj
+/data/*
+/notebooks/*
