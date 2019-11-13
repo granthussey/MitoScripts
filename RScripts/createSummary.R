@@ -9,7 +9,7 @@ library(igraph)
 #
 # Run with Command+Option+r
 
-GnetsFolder <- getwd()
+GnetsFolder <- '/Users/granthussey/github/MitoScripts/MitoScripts/data/'
 
 RawData <- NULL
 Summary <- NULL
