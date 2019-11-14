@@ -6,6 +6,14 @@ import pandas as pd
 
 
 def remove_path(full_path):
+    """
+    Inputs
+    full_path (string): a Unix-based path to a file (with extension)
+
+    Outputs
+    filename (string): just the filename (with extension) from the path
+    """
+
     # full_path: a Unix-based path to the directory
 
     if full_path.find("/") == -1:
@@ -17,15 +25,18 @@ def remove_path(full_path):
     return filename
 
 
-def get_filename(path_or_filename_with_extension):
-    # Inputs
-    # path_or_filename_with_extension: either a path or a filename that points to a specific file, with extension.
-    # (e.g. /usr/dir/sample.mitogrpah)
+def remove_extension(path_or_filename_with_extension):
+    """
+    Inputs
+    path_or_filename_with_extension: either a path or a filename that for a specific file, with extension.
+    (e.g. /usr/dir/sample.mitograph or sample.mitograph)
 
-    # Ouputs:
-    # noExtension: just the filename without the extension (e.g. "sample")
+    Ouputs
+    filename_without_extension: just the filename without the extension (e.g. "sample")
 
-    # This function will fail if more than one . is in the file, such as ".tar.gz"
+    Notes
+    This function will fail if more than one . is in the file, such as ".tar.gz"
+    """
 
     cur_filename_with_extension = remove_path(path_or_filename_with_extension)
 
@@ -34,131 +45,54 @@ def get_filename(path_or_filename_with_extension):
     return filename_without_extension
 
 
-def get_gnet_paths(data_dir):
-    # Inputs
-    # data_dir: Directory pointing to where MitoGraph outputs are
-
-    # Outputs
-    # gnet_path_list: a list containing all the paths to the gnet files
-
-    # gnet_filename_list = []
-    gnet_path_list = []
-
-    for ipath in glob.glob(data_dir + "/*.gnet"):
-        gnet_path_list.append(ipath)
-        # gnet_filename_list.append(get_filename(ipath))
-
-    return gnet_path_list
+def get_paths(data_dir, extension):
+    """"
+    Inputs
+    data_dir (string): path to where your MitoGraph output data are
+    extension (string): the extension to search for (e.g. ".gnet")
 
 
-def get_gnet_dfs(data_dir):
-    # Inputs
-    # data_dir: Directory pointing to where MitoGraph outputs are
-
-    # Outputs
-    # gnet_dfs: dictionary as {filename_without_extension: individual_gnet_df}
-    # Unused outpit is total_nodes, similar dictionary
-
-    gnet_dfs = {}
-    total_nodes = {}
-
-    gnet_path_list = get_gnet_paths(data_dir)
-
-    for ignet_paths in gnet_path_list:
-        cur_filename = get_filename(ignet_paths)
-
-        gnet_dfs[cur_filename] = pd.read_csv(ignet_paths, sep="\t").reset_index()
-
-        total_nodes[cur_filename] = int(gnet_dfs[cur_filename].columns[2])
-
-        gnet_dfs[cur_filename] = gnet_dfs[cur_filename].rename(
-            columns={
-                "level_0": "Source",
-                "level_1": "Target",
-                str(total_nodes[cur_filename]): "Length",
-            }
-        )
-
-    return gnet_dfs
+    Outputs
+    path_list (list of strings): a list where each element is a string that contains the path (with extension)
+    pointing to the files with that extension
+    (e.g. path_list = [sample1.gnet, sample2.gnet])
+    """"
 
 
-def get_edge_list_from_df(df):
-    uncleaned_edges = df.values[:, [0, 1]]
+    path_list = []
 
-    edge_list = []
+    search_criteria = "/*" + extension
 
-    for iter_edges in uncleaned_edges:
-        cur_element = [int(iter_edges[0]), int(iter_edges[1])]
+    for ipath in glob.glob(data_dir + search_criteria):
+        path_list.append(ipath)
 
-        edge_list.append(cur_element)
-
-    return edge_list
+    return path_list
 
 
-def create_igraph_from_edgelist(edge_list):
-    n_vertices = max(max(edge_list))
-    g = gr.Graph()
-    g.add_vertices(n_vertices + 1)
-    g.add_edges(edge_list)
+def get_dfs(data_dir, extension, rename_columns):
 
-    return g
+    dfs = {}
 
+    path_list = get_paths(data_dir, extension)
 
-def calc_logic_vector(df, col, value):
-    query_vector = value * np.ones(len(test_df))
-    logic = df[col] == query_vector
+    for ipath in path_list:
 
-    return logic
+        cur_filename = remove_extension(ipath)
 
+        dfs[cur_filename] = pd.read_csv(ignet_paths, sep="\t").reset_index()
 
-def find_correct_rows(df, edge_list):
-    logical_indices = []
+        dfs[cur_filename] = dfs[cur_filename].rename(rename_columns)
 
-    for cur_pair in edge_list:
-        cur_source = int(cur_pair[0])
-        cur_target = int(cur_pair[1])
-
-        source_logical_vector = calc_logic_vector(df=df, col="Source", value=cur_source)
-
-        target_logical_vector = calc_logic_vector(df=df, col="Target", value=cur_target)
-
-        combined_vector = source_logical_vector & target_logical_vector
-        logical_indices.append(combined_vector)
-
-    base_logical_vector = np.zeros(len(df)) == np.ones(len(df))
-
-    for logical_index in logical_indices:
-        base_logical_vector = base_logical_vector | logical_index
-
-    return base_logical_vector
+        if extension == ".gnet":
+            total_nodes = dfs[cur_filename].columns[2]
+            additional_rename_dict = {str(total_nodes[cur_filename]): "Length"}
+            dfs[cur_filename] = dfs[cur_filename].rename(additional_rename_dict)
 
 
-def wrong_get_raw_dataframe(decomp_graph, df):
+        if extension == ".mitograph":
+            dfs[cur_filename] = dfs[cur_filename].drop(columns="remove_this")
 
-    col = ["Filename", "Nodes", "Edges", "Length"]
-    raw_dataframe = pd.DataFrame(columns=col)
-
-    for every_graph in decomp_graph:
-
-        cur_decomp_edgelist = every_graph.get_edgelist()
-        cur_logic = find_correct_rows(df=df, edge_list=cur_decomp_edgelist)
-        cur_nodes = gr.Graph.vcount(every_graph)
-        cur_edges = gr.Graph.ecount(every_graph)
-        cur_length = sum(df.loc[cur_logic].Length.values)
-
-        cur_graph_dict = {
-            "Filename": cur_filename,
-            "Nodes": cur_nodes,
-            "Edges": cur_edges,
-            "Length": cur_length,
-        }
-
-        new_rows = pd.DataFrame.from_dict([cur_graph_dict])
-
-        raw_dataframe = raw_dataframe.append(new_rows)
-
-    return raw_dataframe
-
+    return dfs
 
 def get_raw_dataframe(decomp_graph, name):
     # Inputs
@@ -189,12 +123,6 @@ def get_raw_dataframe(decomp_graph, name):
 
     return raw_dataframe
 
-
-def find_where(logic):
-    A = [i for i, x in enumerate(logic) if x]
-    return A
-
-
 def create_igraph_from_pandas(df):
     list_of_dicts = []
 
@@ -212,55 +140,6 @@ def create_igraph_from_pandas(df):
     g = gr.Graph.DictList(edges=list_of_dicts, vertices=None)
 
     return g
-
-
-def get_mitograph_paths(data_dir):
-    # Inputs
-    # data_dir: Directory pointing to where MitoGraph outputs are
-
-    # Outputs
-    # mitograph_path_list: a list containing all the paths to the gnet files
-
-    mitograph_path_list = []
-
-    for ipath in glob.glob(data_dir + "/*.mitograph"):
-        mitograph_path_list.append(ipath)
-
-    return mitograph_path_list
-
-
-def get_mitograph_dfs(data_dir):
-    # Inputs
-    # data_dir: Directory pointing to where MitoGraph outputs are
-
-    # Outputs
-    # mitograph_dfs: dictionary as {filename_without_extension: individual_gnet_df}
-    # Unused outpit is total_nodes, similar dictionary
-
-    mitograph_dfs = {}
-
-    mitograph_path_list = get_mitograph_paths(data_dir)
-
-    for imitograph_path in mitograph_path_list:
-        cur_filename = get_filename(imitograph_path)
-
-        mitograph_dfs[cur_filename] = pd.read_csv(imitograph_path, sep="\t")
-
-        mitograph_dfs[cur_filename] = mitograph_dfs[cur_filename].rename(
-            columns={
-                "Volume from voxels": "Vol_From_Voxels",
-                "Average width (um)": "Ave_Width_um",
-                "Std width (um)": "Std_Width_um",
-                "Total length (um)": "Total_Length_um",
-                "Volume from length (um3)": "Vol_From_Length",
-                "Unnamed: 5": "remove_this",
-            }
-        )
-
-        mitograph_dfs[cur_filename] = mitograph_dfs[cur_filename].drop(columns="remove_this")
-
-    return mitograph_dfs
-
 
 # Get the paths of the gnet files for processing
 
@@ -294,9 +173,18 @@ cur_filename = mitograph_filenames[1]
 test_df = mitograph_dfs[cur_filename]
 
 
-# What I need to do next
-# create a loop to go over all of the files
-# create the "raw_data" but also the "summary data" that includes .mitograph data and "raw" data
-# output it all in the end in a summary-like thing!
-# doot.
 
+"""
+
+rename_mitograph_columns = {
+    "Volume from voxels": "Vol_From_Voxels",
+    "Average width (um)": "Ave_Width_um",
+    "Std width (um)": "Std_Width_um",
+    "Total length (um)": "Total_Length_um",
+    "Volume from length (um3)": "Vol_From_Length",
+    "Unnamed: 5": "remove_this",
+}
+
+rename_gnet_columns = {"level_0": "Source", "level_1": "Target"}
+
+"""
