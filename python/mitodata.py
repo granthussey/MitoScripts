@@ -141,50 +141,19 @@ def create_igraph_from_pandas(df):
 
     return g
 
-# Get the paths of the gnet files for processing
+def do_the_thing(df, filename):
 
+    col = ["Filename","Nodes", "Edges", "Length"]
+    summary = pd.DataFrame(columns=col)
 
-def test_gnet():
-    data_dir = "/Users/granthussey/github/MitoScripts/MitoScripts/data"
-    gnet_dfs = get_gnet_dfs(data_dir)
-    gnet_filenames = list(gnet_dfs.keys())
-
-    # THIS IS WHERE THE LOOP GOES!
-
-    cur_filename = "KRAS_mdivi_2W_001_000"
-    test_df = gnet_dfs[cur_filename]
-
-    cur_graph = create_igraph_from_pandas(test_df)
-
+    cur_graph = create_igraph_from_pandas(df)
     cur_decomp_graph = gr.Graph.decompose(cur_graph)
 
-    A = get_raw_dataframe(decomp_graph=cur_decomp_graph, name=cur_filename)
+    for each_graph in cur_decomp_graph:
 
-    # and contin ue until you get da big A and that's the final thing
+        cur_raw_dataframe = get_raw_dataframe(decomp_graph=cur_decomp_graph, name=filename)
+        summary = summary.append(cur_raw_dataframe)
 
-    return A
+    return summary
 
-
-data_dir = "/Users/granthussey/github/MitoScripts/MitoScripts/data"
-
-mitograph_dfs = get_mitograph_dfs(data_dir)
-mitograph_filenames = list(mitograph_dfs.keys())
-cur_filename = mitograph_filenames[1]
-test_df = mitograph_dfs[cur_filename]
-
-
-
-"""
-
-rename_mitograph_columns = {
-    "Volume from voxels": "Vol_From_Voxels",
-    "Average width (um)": "Ave_Width_um",
-    "Std width (um)": "Std_Width_um",
-    "Total length (um)": "Total_Length_um",
-    "Volume from length (um3)": "Vol_From_Length",
-    "Unnamed: 5": "remove_this",
-}
-
-rename_gnet_columns = {"level_0": "Source", "level_1": "Target"}
-
-"""
+# Get the paths of the gnet files for processing
