@@ -1,13 +1,18 @@
-
-import mitodata as mito
 import glob
 
 import igraph as gr
 import numpy as np
 import pandas as pd
 
+import mitodata as doot
+import time
+
+from numba import jit, prange
+from numba.types import List
+
 
 rename_gnet_columns = {"level_0": "Source", "level_1": "Target"}
+
 
 rename_mitograph_columns = {
     "Volume from voxels": "Vol_From_Voxels",
@@ -20,14 +25,34 @@ rename_mitograph_columns = {
 
 
 data_dir = "/Users/granthussey/github/MitoScripts/MitoScripts/data"
-gnet_dfs = mito.get_dfs(data_dir=data_dir, extension=".gnet", rename_columns=rename_gnet_columns)
-summaries = []
+gnet_dfs = doot.get_dfs(
+    data_dir=data_dir, extension=".gnet", rename_columns=rename_gnet_columns
+)
 
 
-for each_key in gnet_dfs:
+# Now do the parallel processing
 
-    cur_summary = mito.do_the_thing(df=gnet_dfs[each_key], filename=each_key)
-    summaries.append(cur_summary)
+
+@jit
+def generate_summaries(dfs):
+    summaries = List(dtype=)
+
+    df_keys = dfs.keys()
+
+    for i in prange(len(df_keys)):
+
+        cur_key = df_keys[i]
+
+        cur_summary = doot.do_the_thing(df=dfs[cur_key], filename=cur_key)
+
+        summaries.append(cur_summary)
+
+    return summaries
+
+start = time.time()
+generate_summaries(gnet_dfs)
+end = time.time()
+print("Elapsed (after compilation) = %s" % (end - start))
 
 
 

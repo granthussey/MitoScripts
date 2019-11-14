@@ -26,7 +26,7 @@ def remove_path(full_path):
 
 
 def remove_extension(path_or_filename_with_extension):
-    """
+    """""
     Inputs
     path_or_filename_with_extension: either a path or a filename that for a specific file, with extension.
     (e.g. /usr/dir/sample.mitograph or sample.mitograph)
@@ -36,7 +36,7 @@ def remove_extension(path_or_filename_with_extension):
 
     Notes
     This function will fail if more than one . is in the file, such as ".tar.gz"
-    """
+    """ ""
 
     cur_filename_with_extension = remove_path(path_or_filename_with_extension)
 
@@ -46,7 +46,7 @@ def remove_extension(path_or_filename_with_extension):
 
 
 def get_paths(data_dir, extension):
-    """"
+    """""
     Inputs
     data_dir (string): path to where your MitoGraph output data are
     extension (string): the extension to search for (e.g. ".gnet")
@@ -56,8 +56,7 @@ def get_paths(data_dir, extension):
     path_list (list of strings): a list where each element is a string that contains the path (with extension)
     pointing to the files with that extension
     (e.g. path_list = [sample1.gnet, sample2.gnet])
-    """"
-
+    """ ""
 
     path_list = []
 
@@ -79,27 +78,27 @@ def get_dfs(data_dir, extension, rename_columns):
 
         cur_filename = remove_extension(ipath)
 
-        dfs[cur_filename] = pd.read_csv(ignet_paths, sep="\t").reset_index()
+        dfs[cur_filename] = pd.read_csv(ipath, sep="\t").reset_index()
 
-        dfs[cur_filename] = dfs[cur_filename].rename(rename_columns)
+        dfs[cur_filename] = dfs[cur_filename].rename(columns=rename_columns)
 
         if extension == ".gnet":
             total_nodes = dfs[cur_filename].columns[2]
-            additional_rename_dict = {str(total_nodes[cur_filename]): "Length"}
-            dfs[cur_filename] = dfs[cur_filename].rename(additional_rename_dict)
-
+            additional_rename_dict = {total_nodes: "Length"}
+            dfs[cur_filename] = dfs[cur_filename].rename(columns=additional_rename_dict)
 
         if extension == ".mitograph":
             dfs[cur_filename] = dfs[cur_filename].drop(columns="remove_this")
 
     return dfs
 
+
 def get_raw_dataframe(decomp_graph, name):
     # Inputs
     # decomp_graph:
     # filename:
 
-    col = ["Filename","Nodes", "Edges", "Length"]
+    col = ["Filename", "Nodes", "Edges", "Length"]
     raw_dataframe = pd.DataFrame(columns=col)
 
     iter_graph = 0
@@ -123,6 +122,7 @@ def get_raw_dataframe(decomp_graph, name):
 
     return raw_dataframe
 
+
 def create_igraph_from_pandas(df):
     list_of_dicts = []
 
@@ -141,9 +141,10 @@ def create_igraph_from_pandas(df):
 
     return g
 
+
 def do_the_thing(df, filename):
 
-    col = ["Filename","Nodes", "Edges", "Length"]
+    col = ["Filename", "Nodes", "Edges", "Length"]
     summary = pd.DataFrame(columns=col)
 
     cur_graph = create_igraph_from_pandas(df)
@@ -151,9 +152,12 @@ def do_the_thing(df, filename):
 
     for each_graph in cur_decomp_graph:
 
-        cur_raw_dataframe = get_raw_dataframe(decomp_graph=cur_decomp_graph, name=filename)
+        cur_raw_dataframe = get_raw_dataframe(
+            decomp_graph=cur_decomp_graph, name=filename
+        )
         summary = summary.append(cur_raw_dataframe)
 
     return summary
+
 
 # Get the paths of the gnet files for processing
