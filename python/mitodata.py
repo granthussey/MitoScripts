@@ -6,13 +6,13 @@ import pandas as pd
 
 
 def remove_path(full_path):
-    """
+    """"
     Inputs
     full_path (string): a Unix-based path to a file (with extension)
 
     Outputs
     filename (string): just the filename (with extension) from the path
-    """
+    """ ""
 
     # full_path: a Unix-based path to the directory
 

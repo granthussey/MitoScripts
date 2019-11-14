@@ -30,24 +30,18 @@ gnet_dfs = doot.get_dfs(
 )
 
 
-# Now do the parallel processing
-
-
-@jit
 def generate_summaries(dfs):
-    summaries = List(dtype=)
 
-    df_keys = dfs.keys()
+    summaries = []
 
-    for i in prange(len(df_keys)):
+    for each_key in dfs:
 
-        cur_key = df_keys[i]
-
-        cur_summary = doot.do_the_thing(df=dfs[cur_key], filename=cur_key)
+        cur_summary = doot.do_the_thing(df=dfs[each_key], filename=each_key)
 
         summaries.append(cur_summary)
 
     return summaries
+
 
 start = time.time()
 generate_summaries(gnet_dfs)
@@ -55,9 +49,7 @@ end = time.time()
 print("Elapsed (after compilation) = %s" % (end - start))
 
 
-
 """
-
 
 data_dir = "/Users/granthussey/github/MitoScripts/MitoScripts/data"
 
@@ -65,7 +57,5 @@ mitograph_dfs = mito.get_mitograph_dfs(data_dir)
 mitograph_filenames = list(mitograph_dfs.keys())
 cur_filename = mitograph_filenames[1]
 test_df = mitograph_dfs[cur_filename]
-
-
 
 """
