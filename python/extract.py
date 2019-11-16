@@ -7,6 +7,7 @@ import pandas as pd
 import mitodata as doot
 import time
 
+
 from numba import jit, prange
 from numba.types import List
 
@@ -25,7 +26,7 @@ rename_mitograph_columns = {
 
 
 data_dir = "/Users/granthussey/github/MitoScripts/MitoScripts/data"
-gnet_dfs = doot.get_dfs(
+gnet_dfs = get_dfs(
     data_dir=data_dir, extension=".gnet", rename_columns=rename_gnet_columns
 )
 
@@ -44,7 +45,7 @@ def generate_summaries(dfs):
 
 
 start = time.time()
-generate_summaries(gnet_dfs)
+doot = generate_summaries(gnet_dfs)
 end = time.time()
 print("Elapsed (after compilation) = %s" % (end - start))
 

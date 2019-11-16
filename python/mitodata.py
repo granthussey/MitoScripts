@@ -57,40 +57,37 @@ def get_paths(data_dir, extension):
     pointing to the files with that extension
     (e.g. path_list = [sample1.gnet, sample2.gnet])
     """ ""
+    search_criteria = ''.join([data_dir, "/*", extension])
 
-    path_list = []
-
-    search_criteria = "/*" + extension
-
-    for ipath in glob.glob(data_dir + search_criteria):
-        path_list.append(ipath)
+    path_list = glob.glob(search_criteria)
 
     return path_list
 
 
 def get_dfs(data_dir, extension, rename_columns):
 
-    dfs = {}
+    def change_third_column(df):
+
+        total_nodes = df.columns[2]
+        df = df.rename(columns={total_nodes: "Length"})
+
+        return df
+
 
     path_list = get_paths(data_dir, extension)
 
-    for ipath in path_list:
+    dfs = map(lambda x: pd.read_csv(x, sep="\t").reset_index(), path_list)
+    dfs = map(lambda x: x.rename(columns=rename_columns), dfs)
 
-        cur_filename = remove_extension(ipath)
 
-        dfs[cur_filename] = pd.read_csv(ipath, sep="\t").reset_index()
+    if extension == ".gnet":
+        dfs = map(change_third_column, dfs)
 
-        dfs[cur_filename] = dfs[cur_filename].rename(columns=rename_columns)
+    if extension == ".mitograph":
+        dfs = map(lambda x: x.drop(columns="remove_this"))
 
-        if extension == ".gnet":
-            total_nodes = dfs[cur_filename].columns[2]
-            additional_rename_dict = {total_nodes: "Length"}
-            dfs[cur_filename] = dfs[cur_filename].rename(columns=additional_rename_dict)
 
-        if extension == ".mitograph":
-            dfs[cur_filename] = dfs[cur_filename].drop(columns="remove_this")
-
-    return dfs
+    return list(dfs)
 
 
 def get_raw_dataframe(decomp_graph, name):
@@ -98,46 +95,47 @@ def get_raw_dataframe(decomp_graph, name):
     # decomp_graph:
     # filename:
 
-    col = ["Filename", "Nodes", "Edges", "Length"]
-    raw_dataframe = pd.DataFrame(columns=col)
+    def extract_raw_dataframe(single_decomp_graph, name):
 
-    iter_graph = 0
-    for iter_graph in range(len(decomp_graph)):
-        every_graph = decomp_graph[iter_graph]
-
-        cur_nodes = gr.Graph.vcount(every_graph)
-        cur_edges = gr.Graph.ecount(every_graph)
-        cur_length_mitochondria = sum(every_graph.es["length"])
+        nodes = gr.Graph.vcount(single_decomp_graph)
+        edges = gr.Graph.ecount(single_decomp_graph)
+        sum_length_mitochondria = sum(single_decomp_graph.es["length"])
 
         cur_graph_dict = {
             "Filename": name,
-            "Nodes": [cur_nodes],
-            "Edges": [cur_edges],
-            "Length": [cur_length_mitochondria],
+            "Nodes": [nodes],
+            "Edges": [edges],
+            "Length": [sum_length_mitochondria],
         }
 
-        new_rows = pd.DataFrame.from_dict(cur_graph_dict)
+        single_mitochondria_dataframe = pd.DataFrame.from_dict(cur_graph_dict)
 
-        raw_dataframe = raw_dataframe.append(new_rows)
+        return single_mitochondria_dataframe
+
+    raw_dataframe = list(map(lambda x: extract_raw_dataframe(single_decomp_graph=x, name=name), decomp_graph))
+
+    combined_raw_dataframe = pd.concat(raw_dataframe).reset_index().drop(columns="index")
 
     return raw_dataframe
 
 
 def create_igraph_from_pandas(df):
-    list_of_dicts = []
 
-    pair_list = df[["Source", "Target"]].values
+    def create_map_of_dicts(row):
 
-    for irow in range(len(df)):
-        cur_source = df["Source"][irow]
-        cur_target = df["Target"][irow]
-        cur_length = df["Length"][irow]
+        # THIS NEEDS TO BE PASSED df.itertuples()
 
-        cur_dict = {"source": cur_source, "target": cur_target, "length": cur_length}
+        cur_source = row.Source
+        cur_target = row.Target
+        cur_length = row.Length
 
-        list_of_dicts.append(cur_dict)
+        dict = {"source": cur_source, "target": cur_target, "length": cur_length}
 
-    g = gr.Graph.DictList(edges=list_of_dicts, vertices=None)
+        return dict
+
+    map_of_dicts = map(create_map_of_dicts, df.itertuples())
+
+    g = gr.Graph.DictList(edges=list(map_of_dicts), vertices=None)
 
     return g
 
