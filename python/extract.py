@@ -7,11 +7,6 @@ import pandas as pd
 import mitodata as doot
 import time
 
-
-from numba import jit, prange
-from numba.types import List
-
-
 rename_gnet_columns = {"level_0": "Source", "level_1": "Target"}
 
 
@@ -21,14 +16,15 @@ rename_mitograph_columns = {
     "Std width (um)": "Std_Width_um",
     "Total length (um)": "Total_Length_um",
     "Volume from length (um3)": "Vol_From_Length",
-    "Unnamed: 5": "remove_this",
+    "Unnamed: 5": "remove_this"}
 }
 
 
 data_dir = "/Users/granthussey/github/MitoScripts/MitoScripts/data"
-gnet_dfs = get_dfs(
-    data_dir=data_dir, extension=".gnet", rename_columns=rename_gnet_columns
-)
+
+
+
+
 
 
 def generate_summaries(dfs):
