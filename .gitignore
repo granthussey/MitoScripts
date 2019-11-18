@@ -219,3 +219,4 @@ zsdoc/data
 *.Rproj
 /data/*
 /notebooks/*
+/DontSync/*
