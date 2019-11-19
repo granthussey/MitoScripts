@@ -208,7 +208,7 @@ def decompose_individual_mitochondria(igraph_df_tuple):
     return igraph_df_tuple[0], igraph_df_tuple[1], combined_mito_dataframe
 
 
-def summarize_image(big_tuple, automated_mitograph_outputs):
+def summarize_image(big_tuple):
     """
     Takes a big tuple filled with data about a specific image, and then creates a row
     of a pandas dataframe with some metrics.
@@ -264,7 +264,7 @@ def summarize_image(big_tuple, automated_mitograph_outputs):
     return summary_dataframe
 
 
-def analyze_images(data_dir, sample_rename_dict=None):
+def analyze_images(data_dir, name_dict=None):
 
     path_list_gnet = find_all_filetype(data_dir, ".gnet")
     path_list_mitograph = find_all_filetype(data_dir, ".mitograph")
@@ -277,12 +277,7 @@ def analyze_images(data_dir, sample_rename_dict=None):
         map(create_automated_mitograph_df, path_list_mitograph)
     )
 
-    summaries = map(
-        lambda x: summarize_image(
-            big_tuple=x, automated_mitograph_outputs=mitograph_automated_summaries
-        ),
-        overall_networks_analyzed,
-    )
+    summaries = map(summarize_image, overall_networks_analyzed)
 
     summary_sheet = pd.concat(summaries)
 
@@ -291,9 +286,9 @@ def analyze_images(data_dir, sample_rename_dict=None):
         [summary_sheet, mitograph_automated_summaries], axis=1, sort=True
     )
 
-    if sample_rename_dict is not None:
+    if name_dict is not None:
         full_summary_sheet = append_conditions(
-            sheet=full_summary_sheet, name_dict=sample_rename_dict
+            sheet=full_summary_sheet, name_dict=name_dict
         )
 
     return full_summary_sheet

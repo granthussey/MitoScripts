@@ -220,3 +220,4 @@ zsdoc/data
 /data/*
 /notebooks/*
 /DontSync/*
+*.png
