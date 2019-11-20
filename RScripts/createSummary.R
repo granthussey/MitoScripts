@@ -9,7 +9,7 @@ library(igraph)
 #
 # Run with Command+Option+r
 
-GnetsFolder <- '/Users/granthussey/github/MitoScripts/MitoScripts/data/'
+GnetsFolder <- '/Users/granthussey/github/MitoScripts/MitoScripts/DontSync/data'
 
 RawData <- NULL
 Summary <- NULL

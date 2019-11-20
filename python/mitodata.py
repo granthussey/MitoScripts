@@ -110,7 +110,7 @@ def create_automated_mitograph_df(path):
     return df
 
 
-def initialize_networks(path):
+def initialize_network(path):
     """
     Creates a graph theory network for all of the mitochondria in each image.
     
@@ -160,7 +160,7 @@ def decompose_individual_mitochondria(igraph_df_tuple):
     This works on ONE tuple at a time.
 
     Inputs
-    igraph_df_tuple (tuple): tuple from initialize_networks() function.
+    igraph_df_tuple (tuple): tuple from initialize_network() function.
 
     0: overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
     1: edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
@@ -269,13 +269,19 @@ def analyze_images(data_dir, name_dict=None):
     path_list_gnet = find_all_filetype(data_dir, ".gnet")
     path_list_mitograph = find_all_filetype(data_dir, ".mitograph")
 
-    overall_networks = map(initialize_networks, path_list_gnet)
-
+    overall_networks = map(initialize_network, path_list_gnet)
     overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
 
     mitograph_automated_summaries = pd.concat(
         map(create_automated_mitograph_df, path_list_mitograph)
     )
+
+    degree_distribution_summaries = pd.concat(
+        map(create_degree_distribution_df, overall_networks_analyzed)
+    )
+
+    overall_networks = map(initialize_network, path_list_gnet)
+    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
 
     summaries = map(summarize_image, overall_networks_analyzed)
 
@@ -283,7 +289,21 @@ def analyze_images(data_dir, name_dict=None):
 
     # use axis=1 so it concats columnar!!!
     full_summary_sheet = pd.concat(
-        [summary_sheet, mitograph_automated_summaries], axis=1, sort=True
+        [summary_sheet, mitograph_automated_summaries, degree_distribution_summaries],
+        axis=1,
+        sort=True,
+    )
+
+    # a new column that requires the whole df
+
+    full_summary_sheet["MitoGraphCS"] = (
+        full_summary_sheet["PHI"]
+        + full_summary_sheet["Ave_Edge_Length"]
+        + full_summary_sheet["AveDeg"]
+    ) / (
+        full_summary_sheet["n_Nodes_Norm_to_Length"]
+        + 1 / full_summary_sheet["Ave_Edge_Length"]
+        + full_summary_sheet["n_Mito_Norm_to_Length"]
     )
 
     if name_dict is not None:
@@ -316,3 +336,84 @@ def append_conditions(sheet, name_dict):
             sheet.at[each_index, "Conditions"] = name_dict[each_replacement]
 
     return sheet
+
+
+def create_degree_distribution_df(big_tuple):
+    """
+
+    Inputs [tuple] from decompose_individual_mitochondria
+    0: overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
+    1: edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
+    2: combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
+                                            network and the columns describe how many nodes, edges, and how long the
+                                            mitochondria is.
+
+    """
+
+    # need to index same
+
+    def calculate_degree_distribution(cur_graph):
+        # Takes a single graph, works on it.
+
+        # Bins will be used as such:
+        # [0, 1) (including 0, excluding 1)
+        # [1, 2) and so on.
+        bins = [0, 1, 2, 3, 4, 5, 6, 7, 10]
+
+        # Get the histogram
+        cur_hist = np.histogram(cur_graph.degree(), bins=bins)
+
+        # ============================================================================================
+
+        # cur_graph.degree() lists for each vertex in the graph the number of edges adjacent to it.
+
+        # For example, if a node has 2 edges, two mitochondrial edges, coming out of it, then
+        # that vertex would have a degree of 2.
+
+        # cur_graph.degree() returns an array n_vertices long, with a degree measurement for each vertex
+        # as an integer.
+
+        # We are simply taking a numpy histogram of this matrix.
+
+        # ============================================================================================
+
+        # Histogram values are in the first element of the array.
+        hist_values = cur_hist[0]
+
+        # remove the first element, which should be 0
+        hist_values = hist_values[1:]
+
+        # ============================================================================================
+
+        # Brief interlude on cur_hist_values
+        # Data will be like this: [  0, 580,   0, 371, 131]
+        # Where each element describes how many k-1 neighbors it has,
+
+        # ============================================================================================
+
+        return hist_values
+
+    name = big_tuple[1].index.name
+
+    cur_igraph = big_tuple[0]
+
+    cur_hist_values = calculate_degree_distribution(cur_igraph)
+
+    # note: higher order junc arent in the ave degree bc we don't know what they're doing yet
+    degree_dict = {
+        "FreeEnds": cur_hist_values[0],
+        "OneWayJunc": cur_hist_values[1],
+        "TwoWayJunc": cur_hist_values[2],
+        "ThreeWayJunc": cur_hist_values[3],
+        "FourWayJunc": cur_hist_values[4],
+        "HigherOrderJunc": sum(cur_hist_values[5:]),
+        "AveDeg": (cur_hist_values[0])
+        + (cur_hist_values[1])
+        + (cur_hist_values[2] * 2)
+        + (cur_hist_values[3] * 3)
+        + (cur_hist_values[4] * 4),
+    }
+
+    degree_dist_df = pd.DataFrame(degree_dict, index=[name])
+
+    return degree_dist_df
