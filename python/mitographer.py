@@ -1,7 +1,6 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
 def scattered_box_plot(data, column, sample_order, data_name=""):
 
     sns.set(style="ticks")
@@ -40,3 +39,12 @@ def scattered_box_plot(data, column, sample_order, data_name=""):
     plt.show()
 
     return f
+
+
+def scatter_plot(**kwargs):
+    fig = plt.figure(figsize=(5, 5))
+    sns.scatterplot(**kwargs)
+    plt.ylim(-3, 3)
+    plt.xlim(-3, 3)
+    plt.title("{x} vs {y}".format(**kwargs))
+    plt.show()
