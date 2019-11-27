@@ -1,4 +1,4 @@
-import graph as g
+import mitographer as mtgraph
 
 to_graph = (
     (
@@ -47,7 +47,58 @@ to_graph = (
     ),
 )
 
+# this not only graphs and saves preliminary data, but also outputs cur_data for each sample.
+# it returns the df as an immutable
+
+summary_dfs = []
+
 for each_sample in to_graph:
-    g.create_graph_suite(
-        data_dir=each_sample[2], data_name=each_sample[0], name_dict=each_sample[1]
+    summary_dfs.append(
+        mtgraph.create_graph_suite(
+            data_dir=each_sample[2], data_name=each_sample[0], name_dict=each_sample[1]
+        )
     )
+
+
+def run_per_treatment_heatmap_analysis(full_summary_sheet):
+
+    name = full_summary_sheet.index.name
+
+    unique_treatments = list(full_summary_sheet.Conditions.unique())
+
+    def find_rows_with_condition_name(sheet, cond):
+        those_rows = sheet.loc[sheet["Conditions"] == cond]
+        those_rows.index.name = cond
+        return those_rows
+
+    all_rows = map(
+        lambda x: find_rows_with_condition_name(full_summary_sheet, cond=x),
+        unique_treatments,
+    )
+
+    set(
+        map(
+            lambda x: mtgraph.heatmap(
+                x,
+                title=x.index.name,
+                data_name=name,
+                savefig=True,
+            ),
+        all_rows
+        )
+    )
+
+    set(
+        map(
+            lambda x: mtgraph.clustermap(
+                x,
+                title=x.index.name,
+                data_name=name,
+                savefig=True,
+            ),
+        all_rows
+        )
+    )
+
+for each_sheet in summary_dfs:
+    run_per_treatment_heatmap_analysis(each_sheet)

@@ -218,6 +218,15 @@ zsdoc/data
 *.DS_Store
 *.Rproj
 /data/*
-/notebooks/*
-/DontSync/*
+/notebooks/
+/DontSync/
 *.png
+
+*.pdf
+*.bat
+*.rst
+*.csv
+_build/
+_static/
+_templates/
+Makefile

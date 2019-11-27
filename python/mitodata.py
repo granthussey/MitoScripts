@@ -6,20 +6,18 @@ import pandas as pd
 
 
 def remove_enclosing_dirs(full_path):
-    """
-    Inputs
-    full_path (string): a Unix-based path to a file (with extension)
+    """ Remove any directories in a filepath
 
-    Outputs
-    filename (string): just the filename (with extension) from the path
-
-    Notes
     If you pass a filename to this function, meaning it doesn't
     contain the "/" string, it will simply return the input back to you.
-    """
 
-    # full_path.find("/") will return the number of "/" in the string
-    # if none exist, it will return -1.
+    Args:
+        full_path (str): a Unix-based path to a file (with extension)
+
+    Returns:
+        filename (string): just the filename (with extension) from the path
+
+    """
 
     if full_path.find("/") != -1:
         filename = full_path.split("/")[-1]
@@ -35,16 +33,17 @@ def remove_enclosing_dirs(full_path):
 
 
 def remove_extension(string):
-    """
-    Inputs
-    string (string): either a path or a filename that for a specific file, with extension.
-    (e.g. /usr/dir/sample.mitograph or sample.mitograph)
+    """ Removes the extention from a string, as well as the directories.
 
-    Ouputs
-    filename_without_extension: just the filename without the extension (e.g. "sample")
-
-    Notes
     This function may fail if more than one . is in the file, such as ".tar.gz"
+
+    Args:
+        string: (string): either a path or a filename that for a specific file, with extension.
+                (e.g. /usr/dir/sample.mitograph or sample.mitograph)
+
+    Returns:
+        filename_without_extension (str): just the filename without the extension (e.g. "sample")
+
     """
 
     # Remove all enclosing directories, only get the name of file.
@@ -57,14 +56,16 @@ def remove_extension(string):
 
 
 def find_all_filetype(data_dir, extension):
-    """
-    Inputs
-    data_dir (string): path to where your MitoGraph output data are
-    extension (string): the extension to search for (e.g. ".gnet", ".mitograph")
+    """ Finds all files in a directory, returns their path
 
-    Outputs
-    path_list (list of strings): a list where each element is a string containing the path for desired files (with extension)
-    (e.g. path_list = [sample1.gnet, sample2.gnet])
+    Args:
+        data_dir (str): path to where your MitoGraph output data are
+        extension (str): the extension to search for (e.g. ".gnet", ".mitograph")
+
+    Returns:
+        path_list (list of strings): a list where each element is a string containing the path for desired files (with extension)
+                                    (e.g. path_list = [sample1.gnet, sample2.gnet])
+
     """
 
     # create a string to search for, include a wildcard * in place of the name of the file
@@ -77,17 +78,36 @@ def find_all_filetype(data_dir, extension):
 
 
 def create_edgelist_df(path):
+    """ Reads in a path to a .gnet file, produces a df of an edgelist for use in igraph
+
+    Args:
+        path (str): This must be a path to a .gnet file
+
+    Returns:
+        df (pandas df): This is an edgelist to be then processed by igraph to create a graph
+                        theory representation of the mitochondria within that .gnet file's image
+
+    """
 
     df = pd.read_csv(path, sep="\t").reset_index()
     df = df.rename(columns={"level_0": "Source", "level_1": "Target"})
-    df = df.rename(
-        columns={df.columns[2]: "Length"}
-    )  # edits the third column, which is always the total # of nodes (per MitoGraph coding)
+
+    # edits the third column, which is always the total # of nodes (per MitoGraph coding)
+    df = df.rename(columns={df.columns[2]: "Length"})
 
     return df
 
 
 def create_automated_mitograph_df(path):
+    """ Creates a cleanly-formatted df containing metrics that are automatic exports from the MitoGraph C code
+
+    Args:
+        path (str): path to a .mitograph file
+
+    Returns:
+        df (pandas df): a cleanly-formatted df of MitoGraph automated outputs
+
+    """
 
     name = remove_extension(path)
     df = pd.read_csv(path, sep="\t").reset_index()
@@ -111,21 +131,22 @@ def create_automated_mitograph_df(path):
 
 
 def initialize_network(path):
-    """
-    Creates a graph theory network for all of the mitochondria in each image.
-    
-    Inputs
-    path (string): path to a single gnet file, which contains connectivity data.
-    One of these exist per image.
-    
-    Outputs [tuple]
-    0: overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
-    1: edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
+    """ Creates a graph theory network of all mitochondria in an image.
+
+    Args:
+        path (str): path to a single gnet file, which contains connectivity data.
+                    One exists per image.
+
+    Returns:
+        (tuple): a tuple containing:
+            overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
+            edgelist_df (pandas df) the pandas df a pandas dataframe with the edgelist for the overall network
     """
 
     def create_map_of_dicts(row):
-
-        # THIS NEEDS TO BE PASSED df.itertuples()
+        """ for use in creating a list of dictionaries to be turned into pandas df in parent func
+        THIS NEEDS TO BE PASSED df.itertuples()
+        """
 
         cur_source = row.Source
         cur_target = row.Target
@@ -151,30 +172,41 @@ def initialize_network(path):
 
 
 def decompose_individual_mitochondria(igraph_df_tuple):
-    """
-    Takes the overall igraph object for the whole image and breaks it down
-    into individual mitochondria igraph objects comprising the greater network.
+    """ Breaks down a whole-image igraph obj into its constituate mitochondria as separate igraph objs
 
-    (Not all mitochondria in the network are connected!)
+     (Not all mitochondria in the network are connected!)
 
-    This works on ONE tuple at a time.
+    Args:
+        igraph_df_tuple (tuple): a tuple from initialize_network() containing:
+            overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
+            edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
 
-    Inputs
-    igraph_df_tuple (tuple): tuple from initialize_network() function.
+    Returns:
+        (tuple): a tuple containing:
+            overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
 
-    0: overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
-    1: edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
+            edgelist_df (Pandas df): edgelist for the overall network
 
-    Outputs [tuple]
-    0: overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
-    1: edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
-    2: combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
-                                            network and the columns describe how many nodes, edges, and how long the
-                                            mitochondria is.
+            combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
+                                                    network and the columns describe how many nodes, edges, and how long the
+                                                    mitochondria is.
 
     """
 
     def analyze_each_mitochondria(decomposed_graph, name_from_edgelist):
+        """ creates a single-row pandas df of the total nodes, edges, and length of a single mitochondria
+
+        Args:
+            decomposed_graph (igraph obj): a single mitochondria decomposed from an whole-image igraph obj
+
+            name_from_edgelist (str): name of the overall image mitochondria came from
+                                     This is derived from an edgelist df, hence its name "name_from_edgelist"
+
+        Returns:
+            single_mitochondria_dataframe (pandas df): a single row df with nodes, edges, and length metrics for
+                                                       decomposed_graph's mitochondria
+
+        """
 
         nodes = gr.Graph.vcount(decomposed_graph)
         edges = gr.Graph.ecount(decomposed_graph)
@@ -209,22 +241,20 @@ def decompose_individual_mitochondria(igraph_df_tuple):
 
 
 def summarize_image(big_tuple):
-    """
-    Takes a big tuple filled with data about a specific image, and then creates a row
-    of a pandas dataframe with some metrics.
+    """ Takes a big tuple filled with data about a specific image, then summarizes it into a single pandas df row
 
-    Inputs [tuple] from decompose_individual_mitochondria
-    0: overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
-    1: edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
-    2: combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
+    Args:
+        big_tuple (tuple): containing:
+            overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
+            edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
+            combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
                                             network and the columns describe how many nodes, edges, and how long the
                                             mitochondria is.
 
-    Outputs
-    summary_dataframe (pandas dataframe): a single row to be concatonated later filled with metrics on a specific image
+    Returns:
+        summary_dataframe (pandas df): a single row to be concatonated later filled with metrics on a specific image
 
     """
-
     cur_igraph = big_tuple[0]
     name = big_tuple[1].index.name
     cur_mito_df = big_tuple[2]
@@ -264,96 +294,24 @@ def summarize_image(big_tuple):
     return summary_dataframe
 
 
-def analyze_images(data_dir, name_dict=None):
-
-    path_list_gnet = find_all_filetype(data_dir, ".gnet")
-    path_list_mitograph = find_all_filetype(data_dir, ".mitograph")
-
-    overall_networks = map(initialize_network, path_list_gnet)
-    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
-
-    mitograph_automated_summaries = pd.concat(
-        map(create_automated_mitograph_df, path_list_mitograph)
-    )
-
-    degree_distribution_summaries = pd.concat(
-        map(create_degree_distribution_df, overall_networks_analyzed)
-    )
-
-    overall_networks = map(initialize_network, path_list_gnet)
-    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
-
-    summaries = map(summarize_image, overall_networks_analyzed)
-
-    summary_sheet = pd.concat(summaries)
-
-    # use axis=1 so it concats columnar!!!
-    full_summary_sheet = pd.concat(
-        [summary_sheet, mitograph_automated_summaries, degree_distribution_summaries],
-        axis=1,
-        sort=True,
-    )
-
-    # a new column that requires the whole df
-
-    full_summary_sheet["MitoGraphCS"] = (
-        full_summary_sheet["PHI"]
-        + full_summary_sheet["Ave_Edge_Length"]
-        + full_summary_sheet["AveDeg"]
-    ) / (
-        full_summary_sheet["n_Nodes_Norm_to_Length"]
-        + 1 / full_summary_sheet["Ave_Edge_Length"]
-        + full_summary_sheet["n_Mito_Norm_to_Length"]
-    )
-
-    if name_dict is not None:
-        full_summary_sheet = append_conditions(
-            sheet=full_summary_sheet, name_dict=name_dict
-        )
-
-    return full_summary_sheet
-
-
-def append_conditions(sheet, name_dict):
-    """
-    :param
-    name_dict (dict): key/value pairs of the search parameter/what to replace it with
-    sheet (pandas dataframe): the sheet to append these on
-
-    :return
-    Updated sheet
-    """
-
-    index_list = sheet.index.values
-
-    sheet["Conditions"] = None
-
-    for each_replacement in name_dict:
-
-        indices_to_replace = [elm for elm in index_list if each_replacement in elm]
-
-        for each_index in indices_to_replace:
-            sheet.at[each_index, "Conditions"] = name_dict[each_replacement]
-
-    return sheet
-
-
 def create_degree_distribution_df(big_tuple):
-    """
+    """ Creates a degree distribution df for processing in the analyze_image() func
 
-    Inputs [tuple] from decompose_individual_mitochondria
-    0: overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
-    1: edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
-    2: combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
+    Args:
+        big_tuple (tuple): containing:
+            overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
+            edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
+            combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
                                             network and the columns describe how many nodes, edges, and how long the
                                             mitochondria is.
 
+    Returns:
+        degree_dist_df (pandas df): dataframe containing data on degree distributions of an image
+
     """
 
-    # need to index same
-
     def calculate_degree_distribution(cur_graph):
-        # Takes a single graph, works on it.
+        """Takes a single graph, works on it"""
 
         # Bins will be used as such:
         # [0, 1) (including 0, excluding 1)
@@ -417,3 +375,97 @@ def create_degree_distribution_df(big_tuple):
     degree_dist_df = pd.DataFrame(degree_dict, index=[name])
 
     return degree_dist_df
+
+
+def append_conditions(sheet, name_dict):
+    """ Add row "Conditions" describing the treatment of each image (+/- drug, +/- compression, etc)
+
+    Args:
+        sheet (pandas df): existing sheet with data on images from data_dir
+        name_dict (dict): dict containing key:value pairs with keys of filename at time of
+                          acquisition and values of what they should be labeled
+
+                          (ex: KRAS_control: KRAS_ctrl, p53_aga: p53_aga)
+                          This will make anything labeled KRAS_control_001_041 etc named "KRAS_control"
+    Returns:
+        sheet (pandas df): updated sheet with
+
+    """
+
+
+    index_list = sheet.index.values
+
+    sheet["Conditions"] = None
+
+    for each_replacement in name_dict:
+
+        indices_to_replace = [elm for elm in index_list if each_replacement in elm]
+
+        for each_index in indices_to_replace:
+            sheet.at[each_index, "Conditions"] = name_dict[each_replacement]
+
+    return sheet
+
+
+def analyze_images(data_dir, name_dict=None, data_name="index"):
+    """ Runs image analysis on each sample within a data directory
+
+    Args:
+        data_dir (str): path to where the data is.
+        name_dict (dict): dict containing key:value pairs with keys of filename at time of
+                          acquisition and values of what they should be labeled
+                          (ex: KRAS_control: KRAS_ctrl)
+
+    Returns:
+        full_summary_sheet (pandas df)
+
+    """
+
+    path_list_gnet = find_all_filetype(data_dir, ".gnet")
+    path_list_mitograph = find_all_filetype(data_dir, ".mitograph")
+
+    overall_networks = map(initialize_network, path_list_gnet)
+    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
+
+    mitograph_automated_summaries = pd.concat(
+        map(create_automated_mitograph_df, path_list_mitograph)
+    )
+
+    degree_distribution_summaries = pd.concat(
+        map(create_degree_distribution_df, overall_networks_analyzed)
+    )
+
+    overall_networks = map(initialize_network, path_list_gnet)
+    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
+
+    summaries = map(summarize_image, overall_networks_analyzed)
+
+    summary_sheet = pd.concat(summaries)
+
+    # use axis=1 so it concats columnar!!!
+    full_summary_sheet = pd.concat(
+        [summary_sheet, mitograph_automated_summaries, degree_distribution_summaries],
+        axis=1,
+        sort=True,
+    )
+
+    # a new column that requires the whole df
+
+    full_summary_sheet["MitoGraphCS"] = (
+        full_summary_sheet["PHI"]
+        + full_summary_sheet["Ave_Edge_Length"]
+        + full_summary_sheet["AveDeg"]
+    ) / (
+        full_summary_sheet["n_Nodes_Norm_to_Length"]
+        + 1 / full_summary_sheet["Ave_Edge_Length"]
+        + full_summary_sheet["n_Mito_Norm_to_Length"]
+    )
+
+    if name_dict is not None:
+        full_summary_sheet = append_conditions(
+            sheet=full_summary_sheet, name_dict=name_dict
+        )
+
+    full_summary_sheet.index.name = data_name
+
+    return full_summary_sheet
