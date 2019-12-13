@@ -18,7 +18,9 @@ to_graph = (
 data_dir = to_graph[2]
 name_dict = to_graph[1]
 
-cur_data = mt.analyze_images(data_dir=data_dir, name_dict=name_dict, data_name='compression')
+cur_data = mt.analyze_images(
+    data_dir=data_dir, name_dict=name_dict, data_name="compression"
+)
 
 
 # %%
@@ -48,25 +50,26 @@ import seaborn as sns
 
 # %%
 to_graph = cur_data.drop(
-        columns=[
-            "MitoGraphCS",
-            "Conditions",
-            "n_Nodes_Norm_to_Length",
-            "n_Nodes",
-            "Median_n_Nodes",
-            "Median_n_Edges",
-            "Vol_From_Voxels",
-            "Std_Width_um",
-            "Total_Length_um",
-            "OneWayJunc",
-            "HigherOrderJunc",
-            "AveDeg",
-            "FreeEnds",
-            "FourWayJunc",
-            'Vol_From_Length',
-            "Median_Edge_Length",
-        ])
-cond_table = cur_data['Conditions'].copy()
+    columns=[
+        "MitoGraphCS",
+        "Conditions",
+        "n_Nodes_Norm_to_Length",
+        "n_Nodes",
+        "Median_n_Nodes",
+        "Median_n_Edges",
+        "Vol_From_Voxels",
+        "Std_Width_um",
+        "Total_Length_um",
+        "OneWayJunc",
+        "HigherOrderJunc",
+        "AveDeg",
+        "FreeEnds",
+        "FourWayJunc",
+        "Vol_From_Length",
+        "Median_Edge_Length",
+    ]
+)
+cond_table = cur_data["Conditions"].copy()
 
 # make array
 x = to_graph.values
@@ -91,11 +94,11 @@ fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(1, 1, 1)
 ax.set_xlabel("".join(["PC 1: ", str(round(ratio[0], 2))]), fontsize=15)
 ax.set_ylabel("".join(["PC 2: ", str(round(ratio[1], 2))]), fontsize=15)
-ax.set_title('PCA Plot, Labeled by Treatment/Geno')
+ax.set_title("PCA Plot, Labeled by Treatment/Geno")
 
 
 targets = cond_table.unique()
-colors = ["#1f77b4", "#17becf", '#7f7f7f', '#d62728', '#9467bd', '#e377c2']
+colors = ["#1f77b4", "#17becf", "#7f7f7f", "#d62728", "#9467bd", "#e377c2"]
 
 for target, color in zip(targets, colors):
 
@@ -109,15 +112,13 @@ for target, color in zip(targets, colors):
     )
 
 
-
 ax.legend(targets)
 ax.grid()
 
-fig.savefig('PCA.pdf')
+fig.savefig("PCA.pdf")
 
 
 plt.show()
-
 
 
 # %%
@@ -131,12 +132,11 @@ centroids = []
 
 for each_group in targets:
 
-    logic = finalDf['Conditions'] == each_group
-    n_rows = len(finalDf['principal component 1'].loc[logic])
+    logic = finalDf["Conditions"] == each_group
+    n_rows = len(finalDf["principal component 1"].loc[logic])
 
-    x_coor = sum(finalDf['principal component 1'].loc[logic]) / n_rows
-    y_coor = sum(finalDf['principal component 2'].loc[logic]) / n_rows
-
+    x_coor = sum(finalDf["principal component 1"].loc[logic]) / n_rows
+    y_coor = sum(finalDf["principal component 2"].loc[logic]) / n_rows
 
     centroids.append((x_coor, y_coor))
 
@@ -144,15 +144,10 @@ for each_group in targets:
 
 fig2 = plt.figure(figsize=(8, 8))
 ax2 = fig.add_subplot(1, 1, 1)
-ax2.set_label = 'doot'
+ax2.set_label = "doot"
 
 for each_centroid, color, target in zip(centroids, colors, targets):
-    ax2.scatter(
-        each_centroid[0],
-        each_centroid[1],
-        c=color,
-        label= target
-    )
+    ax2.scatter(each_centroid[0], each_centroid[1], c=color, label=target)
 
 ax.legend(targets)
 ax.grid()
@@ -166,6 +161,7 @@ plt.show()
 # see if it gets better
 import numpy as np
 
+
 def run_2_dim_pca(df):
 
     x = df.values
@@ -177,15 +173,16 @@ def run_2_dim_pca(df):
 
     return sum(pca.explained_variance_ratio_)
 
+
 df = cur_data
 
-df = df.drop(columns='Conditions')
+df = df.drop(columns="Conditions")
 
-#drop_indices = np.random.choice(df.index, 1, replace=False)
-#df_subset = df.drop(drop_indices)
+# drop_indices = np.random.choice(df.index, 1, replace=False)
+# df_subset = df.drop(drop_indices)
 
-#n_new_cols = 10
-#while n_new_cols > 6:
+# n_new_cols = 10
+# while n_new_cols > 6:
 
 # %%
 
@@ -197,6 +194,7 @@ import pandas as pd
 import numpy as np
 
 # %%
+
 
 def run_2_dim_pca(df):
 
@@ -236,11 +234,10 @@ def do_it(df, threshold=0.95, min_cols=6):
 
     n_cols = df.shape[1]
 
-    conds = df['Conditions'].copy()
-    df = df.drop(columns='Conditions')
+    conds = df["Conditions"].copy()
+    df = df.drop(columns="Conditions")
 
     prev_max = 0
-
 
     while n_cols > min_cols:
 
@@ -267,3 +264,21 @@ def run_it(df, threshold=0.95, min_cols=6):
     new_df, max = do_it(df=df, threshold=threshold, min_cols=min_cols)
 
     pca_suite(df=new_df, to_drop=[])
+
+
+# %%
+
+
+for each_name in names:
+    subset = doot.loc[doot["Filename"] == each_name]
+    logic = subset["Length"] != np.max(subset["Length"])
+
+    subset = subset.loc[logic]
+
+    subset.sort_values(by="Length", inplace=True)
+
+    plt.scatter(x=np.linspace(1, len(subset), num=len(subset)), y=subset["Length"])
+
+    plt.show()
+
+    # %%

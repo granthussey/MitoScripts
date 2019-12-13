@@ -79,26 +79,21 @@ def run_per_treatment_heatmap_analysis(full_summary_sheet):
     set(
         map(
             lambda x: mtgraph.heatmap(
-                x,
-                title=x.index.name,
-                data_name=name,
-                savefig=True,
+                x, title=x.index.name, data_name=name, savefig=True,
             ),
-        all_rows
+            all_rows,
         )
     )
 
     set(
         map(
             lambda x: mtgraph.clustermap(
-                x,
-                title=x.index.name,
-                data_name=name,
-                savefig=True,
+                x, title=x.index.name, data_name=name, savefig=True,
             ),
-        all_rows
+            all_rows,
         )
     )
+
 
 for each_sheet in summary_dfs:
     run_per_treatment_heatmap_analysis(each_sheet)

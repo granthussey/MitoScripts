@@ -230,3 +230,6 @@ _build/
 _static/
 _templates/
 Makefile
+.vscode
+
+

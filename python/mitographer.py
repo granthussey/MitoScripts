@@ -7,7 +7,9 @@ import pandas as pd
 import numpy as np
 
 
-def scattered_box_plot(data, column, sample_order, data_name="", ax=None):
+def scattered_box_plot(
+    data, column, sample_order, data_name="", ax=None, x="Conditions"
+):
 
     sns.set(style="ticks")
 
@@ -18,7 +20,7 @@ def scattered_box_plot(data, column, sample_order, data_name="", ax=None):
 
     # Plot the orbital period with horizontal boxes
     sns.boxplot(
-        x="Conditions",
+        x=x,
         y=column,
         data=data,
         order=sample_order,
@@ -29,7 +31,7 @@ def scattered_box_plot(data, column, sample_order, data_name="", ax=None):
 
     # Add in points to show each observation
     sns.swarmplot(
-        x="Conditions",
+        x=x,
         y=column,
         data=data,
         order=sample_order,
@@ -220,7 +222,6 @@ def get_default_col_to_drop():
         "FreeEnds",
         "FourWayJunc",
         "Vol_From_Length",
-        "Median_Edge_Length",
     ]
 
     return to_drop

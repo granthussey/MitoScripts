@@ -4,6 +4,23 @@ import igraph as gr
 import numpy as np
 import pandas as pd
 
+from functools import wraps
+import time
+
+
+def timefn(fn):
+    """wrapper to time the enclosed function"""
+
+    @wraps(fn)
+    def measure_time(*args, **kwargs):
+        t1 = time.time()
+        result = fn(*args, **kwargs)
+        t2 = time.time()
+        print("@timefn: {} took {} seconds".format(fn.__name__, t2 - t1))
+        return result
+
+    return measure_time
+
 
 def remove_enclosing_dirs(full_path):
     """ Remove any directories in a filepath
@@ -144,6 +161,9 @@ def initialize_network(path):
     """
 
     def create_map_of_dicts(row):
+        """
+        """
+
         """ for use in creating a list of dictionaries to be turned into pandas df in parent func
         THIS NEEDS TO BE PASSED df.itertuples()
         """
@@ -182,14 +202,14 @@ def decompose_individual_mitochondria(igraph_df_tuple):
             edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
 
     Returns:
-        (tuple): a tuple containing:
+        ([tuple]): a tuple containing:
             overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
 
-            edgelist_df (Pandas df): edgelist for the overall network
+            edgelist_df (Pandas df): [edgelist for the overall network]
 
-            combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
+            combined_mito_dataframe ([Pandas df]): [a pandas dataframe where every row is a single mitochondria in the overall
                                                     network and the columns describe how many nodes, edges, and how long the
-                                                    mitochondria is.
+                                                    mitochondria is.]
 
     """
 
@@ -270,6 +290,7 @@ def summarize_image(big_tuple):
     node_norm = total_nodes / total_length
     n_mito_norm_to_length = n_mitochondria / total_length
     n_mito_norm_to_edge = n_mitochondria / total_edges
+    n_edges_norm_to_length = total_edges / total_length
 
     median_n_nodes = np.median(cur_mito_df["Nodes"])
     median_n_edges = np.median(cur_mito_df["Edges"])
@@ -288,6 +309,7 @@ def summarize_image(big_tuple):
         "Median_n_Nodes": median_n_nodes,
         "Median_n_Edges": median_n_edges,
         "Median_Edge_Length": median_edge_length,
+        "n_Edges_Norm_to_Length": n_edges_norm_to_length,
     }
     summary_dataframe = pd.DataFrame(data_dict, index=[name])
 
@@ -377,36 +399,72 @@ def create_degree_distribution_df(big_tuple):
     return degree_dist_df
 
 
-def append_conditions(sheet, name_dict):
+def append_conditions(sheet, name_dict, is_for_edgedist=False):
     """ Add row "Conditions" describing the treatment of each image (+/- drug, +/- compression, etc)
 
     Args:
         sheet (pandas df): existing sheet with data on images from data_dir
+
         name_dict (dict): dict containing key:value pairs with keys of filename at time of
                           acquisition and values of what they should be labeled
 
                           (ex: KRAS_control: KRAS_ctrl, p53_aga: p53_aga)
                           This will make anything labeled KRAS_control_001_041 etc named "KRAS_control"
+
+        is_for_edgelist (int): this will be False unless set to true by proper function. Treats indices differently.
     Returns:
         sheet (pandas df): updated sheet with
 
     """
 
+    if is_for_edgedist:
+        index_list = sheet["Filename"]
 
-    index_list = sheet.index.values
+        # create a new temp sheet to process names
+        sheet_adj = sheet.set_index("Filename")
 
-    sheet["Conditions"] = None
+    else:
+        index_list = sheet.index.values
+        sheet_adj = sheet.copy()
+
+    sheet_adj["Conditions"] = None
 
     for each_replacement in name_dict:
 
         indices_to_replace = [elm for elm in index_list if each_replacement in elm]
 
         for each_index in indices_to_replace:
-            sheet.at[each_index, "Conditions"] = name_dict[each_replacement]
+            sheet_adj.at[each_index, "Conditions"] = name_dict[each_replacement]
 
-    return sheet
+    return sheet_adj
 
 
+def quant_graph_theory(data_dir):
+    """Maps out the analysis for a data_dir of images
+    
+    Args:
+        data_dir (str): path to where the data is
+    
+    Returns:
+        map object: a transformation from image file -> per graph per mito analysis
+    """
+
+    # Get all files that end in .gnet, which contain metrics needed to build igraph graph
+    cur_pathlist_gnet = find_all_filetype(data_dir, ".gnet")
+
+    # Uses the "igraph" package to do graph theory analysis
+    # to produce an igraph graph theory graph for each image
+    cur_graph_per_image = map(initialize_network, cur_pathlist_gnet)
+
+    # Decompose each image into individual mitochondria
+    cur_graph_per_image_per_mito = map(
+        decompose_individual_mitochondria, cur_graph_per_image
+    )
+
+    return cur_graph_per_image_per_mito
+
+
+@timefn
 def analyze_images(data_dir, name_dict=None, data_name="index"):
     """ Runs image analysis on each sample within a data directory
 
@@ -415,57 +473,118 @@ def analyze_images(data_dir, name_dict=None, data_name="index"):
         name_dict (dict): dict containing key:value pairs with keys of filename at time of
                           acquisition and values of what they should be labeled
                           (ex: KRAS_control: KRAS_ctrl)
+        data_name (str): an optional name for your dataset, to designate that specific experiment
+                         (ex: compression_10_21_19)
 
     Returns:
-        full_summary_sheet (pandas df)
+        pandas df containing a summary of all pertinent data
 
     """
+    # =============================================
+    # PART 1: Calculate all of the graph-theory-related metrics
+    # =============================================
 
-    path_list_gnet = find_all_filetype(data_dir, ".gnet")
+    # Get all the files, igraph run analysis.
+    graph_per_image_per_mito = list(quant_graph_theory(data_dir))
+
+    # Get the final dataframe containing graph-theory-related metrics
+    quantified_graph_theory = pd.concat(map(summarize_image, graph_per_image_per_mito))
+
+    # =============================================
+    # PART 2: Get degree distribution data
+    # =============================================
+
+    # Get the degree distribution information
+    quantified_degree_distribution = pd.concat(
+        map(create_degree_distribution_df, graph_per_image_per_mito)
+    )
+
+    # =============================================
+    # PART 3: Aggregate automated MitoGraph outputs
+    # =============================================
+
+    # Get all files that end in .mitograph, which contain metrics automatted calculated by MitoGraph
     path_list_mitograph = find_all_filetype(data_dir, ".mitograph")
 
-    overall_networks = map(initialize_network, path_list_gnet)
-    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
-
-    mitograph_automated_summaries = pd.concat(
+    # Aggregate the MitoGraph data
+    quantified_automated_mitograph = pd.concat(
         map(create_automated_mitograph_df, path_list_mitograph)
     )
 
-    degree_distribution_summaries = pd.concat(
-        map(create_degree_distribution_df, overall_networks_analyzed)
-    )
-
-    overall_networks = map(initialize_network, path_list_gnet)
-    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
-
-    summaries = map(summarize_image, overall_networks_analyzed)
-
-    summary_sheet = pd.concat(summaries)
+    # =================================================
+    # PART 4: Bring Parts 1-3 together in one dataframe
+    # =================================================
 
     # use axis=1 so it concats columnar!!!
-    full_summary_sheet = pd.concat(
-        [summary_sheet, mitograph_automated_summaries, degree_distribution_summaries],
+    full_dataframe = pd.concat(
+        [
+            quantified_graph_theory,
+            quantified_automated_mitograph,
+            quantified_degree_distribution,
+        ],
         axis=1,
         sort=True,
     )
 
-    # a new column that requires the whole df
+    # [STILL IN PROGRESS]
+    # Calculate the MitoGraph connectivity score
 
-    full_summary_sheet["MitoGraphCS"] = (
-        full_summary_sheet["PHI"]
-        + full_summary_sheet["Ave_Edge_Length"]
-        + full_summary_sheet["AveDeg"]
+    full_dataframe["MitoGraphCS"] = (
+        full_dataframe["PHI"]
+        + full_dataframe["Ave_Edge_Length"]
+        + full_dataframe["AveDeg"]
     ) / (
-        full_summary_sheet["n_Nodes_Norm_to_Length"]
-        + 1 / full_summary_sheet["Ave_Edge_Length"]
-        + full_summary_sheet["n_Mito_Norm_to_Length"]
+        full_dataframe["n_Nodes_Norm_to_Length"]
+        + 1 / full_dataframe["Ave_Edge_Length"]
+        + full_dataframe["n_Mito_Norm_to_Length"]
     )
 
+    # If a name_dict is provided,
+    # this will add in your designated treatment titles
     if name_dict is not None:
-        full_summary_sheet = append_conditions(
-            sheet=full_summary_sheet, name_dict=name_dict
+        full_dataframe = append_conditions(sheet=full_dataframe, name_dict=name_dict)
+
+    # the experiment name is saved as the title to the index.
+    # this is a *kinda* hacky way of doing things, but works ...
+    full_dataframe.index.name = data_name
+
+    return full_dataframe
+
+
+def get_indiv_data(data_dir, name_dict=None, data_name="index"):
+    """ Runs image analysis on each sample within a data directory
+
+    Args:
+        data_dir (str): path to where the data is.
+
+        name_dict (dict): dict containing key:value pairs with keys of filename at time of
+                          acquisition and values of what they should be labeled
+                          (ex: KRAS_control: KRAS_ctrl)
+
+        data_name (str): an optional name for your dataset, to designate that specific experiment
+                         (ex: compression_10_21_19)
+
+    Returns:
+        pandas df containing data pretaining to the 
+        
+    """
+
+    # Go thru analysis as far as decomposing into indiv mitochondria
+    path_list_gnet = find_all_filetype(data_dir, ".gnet")
+    overall_networks = map(initialize_network, path_list_gnet)
+    overall_networks_analyzed = map(decompose_individual_mitochondria, overall_networks)
+
+    # now extract only the pertinent information about the distribution of lengths per image per mitochodnria
+    decomposed_dataframe_information = pd.concat(
+        map(lambda x: x[2], overall_networks_analyzed)
+    )
+
+    # add in "conditions" column
+    if name_dict is not None:
+        decomposed_dataframe_information = append_conditions(
+            sheet=decomposed_dataframe_information,
+            name_dict=name_dict,
+            is_for_edgedist=True,
         )
 
-    full_summary_sheet.index.name = data_name
-
-    return full_summary_sheet
+    return decomposed_dataframe_information
