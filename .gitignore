@@ -221,15 +221,6 @@ zsdoc/data
 /notebooks/
 /DontSync/
 *.png
-
-*.pdf
-*.bat
-*.rst
-*.csv
-_build/
-_static/
-_templates/
-Makefile
 .vscode
 
 
