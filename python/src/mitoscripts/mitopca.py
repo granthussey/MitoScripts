@@ -64,16 +64,15 @@ def remove_dissimilarity(df, threshold=0.95, min_cols=6):
     return final_df, cur_max
 
 
-def run_it(df, threshold=0.95, min_cols=6):
+def run_special_pca(df, threshold=0.95, min_cols=6):
 
     new_df, max = remove_dissimilarity(df=df, threshold=threshold, min_cols=min_cols)
     mtgrapher.pca_suite(df=new_df, to_drop=[])
 
 
-# %%
-
-
 def force_50_50_axes(df, min_cols=6):
+    """Currently not working"""
+
     def find_most_similar(df):
 
         cols = df.columns.values

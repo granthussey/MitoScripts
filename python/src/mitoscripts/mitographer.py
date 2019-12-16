@@ -5,11 +5,16 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import pandas as pd
 import numpy as np
+import mitodata as mt
+
+
+DEFAULT_STYLE = "tableau-colorblind10"
 
 
 def scattered_box_plot(
-    data, column, sample_order, data_name="", ax=None, x="Conditions"
+    data, column, sample_order, data_name="", ax=None, x="Conditions", logscale=False
 ):
+    """currently working"""
 
     sns.set(style="ticks")
 
@@ -17,6 +22,9 @@ def scattered_box_plot(
         f, ax = plt.subplots(figsize=(7, 6))
     else:
         f = None
+
+    if logscale:
+        data[column] = np.log10(data[column])
 
     # Plot the orbital period with horizontal boxes
     sns.boxplot(
@@ -51,17 +59,8 @@ def scattered_box_plot(
     return f
 
 
-def scatter_plot(**kwargs):
-    fig = plt.figure(figsize=(5, 5))
-    sns.scatterplot(**kwargs)
-    plt.ylim(-3, 3)
-    plt.xlim(-3, 3)
-    plt.title("{x} vs {y}".format(**kwargs))
-    plt.show()
-
-
 def create_graph_suite(data_dir, data_name, name_dict, savefigs=False):
-
+    """currently working"""
     cur_data = analyze_images(
         data_dir=data_dir, name_dict=name_dict, data_name=data_name
     )
@@ -86,10 +85,11 @@ def create_graph_suite(data_dir, data_name, name_dict, savefigs=False):
             item.savefig("".join([data_name, "_", cur_col, ".png"]))
             i = i + 1
 
-    return cur_data
+    return ` cur_data `
 
 
 def create_graph_array(cur_data, name_dict, savefigs=False):
+    """currently not working"""
 
     cur_data_graph = cur_data.drop(
         columns=[
@@ -136,7 +136,7 @@ def create_graph_array(cur_data, name_dict, savefigs=False):
         fig.savefig(filename, dpi=300)
 
 
-def clean_df_get_corr(df):
+def clean_df_and_get_corr(df):
 
     df_graph = df.drop(
         columns=[
@@ -163,7 +163,8 @@ def clean_df_get_corr(df):
 
 def heatmap(df, title="", data_name="", savefig=False):
 
-    df_graph_corr = clean_df_get_corr(df)
+    df_graph_corr = clean_df_and_get_corr(df)
+
     cmap = sns.diverging_palette(10, 220, sep=80, as_cmap=True)
     fig = plt.figure(figsize=[6, 6])
     ax = plt.axes()
@@ -182,7 +183,7 @@ def heatmap(df, title="", data_name="", savefig=False):
 
 def clustermap(df, title="", data_name="", savefig=False):
 
-    df_graph_corr = clean_df_get_corr(df)
+    df_graph_corr = clean_df_and_get_corr(df)
     cmap = sns.diverging_palette(10, 220, sep=80, as_cmap=True)
     g = sns.clustermap(
         data=df_graph_corr, cmap=cmap, figsize=[10, 7], square=True, vmin=-1, vmax=1
@@ -259,10 +260,7 @@ def run_pca(df, to_drop=None):
     return pca_plottable_df, pca
 
 
-default_style = "tableau-colorblind10"
-
-
-def make_pca_plot(df, to_drop=None, style=default_style):
+def make_pca_plot(df, to_drop=None, style=DEFAULT_STYLE):
 
     pca_plottable_df, pca = run_pca(df, to_drop=to_drop)
 
@@ -293,7 +291,7 @@ def make_pca_plot(df, to_drop=None, style=default_style):
     plt.show()
 
 
-def make_centroid_plot(df, to_drop=None, style=default_style):
+def make_centroid_plot(df, to_drop=None, style=DEFAULT_STYLE):
 
     if not "Conditions" in df.columns:
         print("Error. Please have a Conditions column in df.")
@@ -334,7 +332,7 @@ def make_centroid_plot(df, to_drop=None, style=default_style):
     plt.show()
 
 
-def make_scree_plot(df, to_drop=None, style=default_style, n_comp=None):
+def make_scree_plot(df, to_drop=None, style=DEFAULT_STYLE, n_comp=None):
 
     if not "Conditions" in df.columns:
         print("Error. Please have a Conditions column in df.")
@@ -381,8 +379,99 @@ def make_scree_plot(df, to_drop=None, style=default_style, n_comp=None):
     plt.show()
 
 
-def pca_suite(df, to_drop=None, style=default_style):
+def pca_suite(df, to_drop=None, style=DEFAULT_STYLE):
 
     make_pca_plot(df, to_drop=to_drop, style=style)
     make_scree_plot(df, to_drop=to_drop, style=style)
     make_centroid_plot(df, to_drop=to_drop, style=style)
+
+
+def scatter_length_distribution(data_dir, name_dict, data_name="", savefig=False):
+
+    data = mt.analyze_mitochondrial_length_distribution(
+        data_dir=data_dir, name_dict=name_dict, data_name=data_name
+    )
+
+    # get a list of all images we need to create rows for
+    unique_images = data.index.unique()
+
+    # determine which image has the max # of mito (and more specifically what that # is)
+    max_num_mito = max(map(lambda x: len(data.loc[x]), unique_images))
+
+    the_index = []
+    row_vectors = []
+
+    for each_image in unique_images:
+
+        subset = data.loc[each_image]
+
+        # get things sorted
+        lengths_of_mito = np.sort(subset["Length"].values)
+        lengths_of_mito = lengths_of_mito[::-1]
+
+        if len(lengths_of_mito) == max_num_mito:
+            new_vector = lengths_of_mito
+        else:
+            num_zeros_needed = max_num_mito - len(lengths_of_mito)
+            pad = np.zeros(num_zeros_needed)
+            pad[:] = np.nan
+            new_vector = np.concatenate([lengths_of_mito, pad])
+
+        new_vector = np.log2(new_vector)
+
+        the_index.append(each_image)
+        row_vectors.append(new_vector)
+
+    new = pd.DataFrame(row_vectors)
+    new["Filename"] = the_index
+    new = new.set_index("Filename")
+
+    #####
+
+    new_with_conds = mt.append_conditions(new, name_dict=name_dict)
+
+    ####
+
+    sorted_list = []
+    for each_cond in name_dict.values():
+        sorted_list.append(
+            new_with_conds.loc[new_with_conds["Conditions"] == each_cond]
+        )
+
+    sorted_data = pd.concat(sorted_list)
+
+    stacked_list = []
+
+    def do_the_counts(part):
+
+        col = part.isna().sum(axis=1)
+        new_thing = part.copy()
+        new_thing["counts"] = col
+        new_thing = new_thing.sort_values(by="counts", ascending=False)
+
+        return new_thing
+
+    for each_cond in name_dict.values():
+        subset = sorted_data.loc[sorted_data["Conditions"] == each_cond]
+        stacked_list.append(do_the_counts(subset))
+
+    stacked_data = pd.concat(stacked_list)
+
+    stacked_data = stacked_data.drop(columns=["Conditions", "counts"])
+
+    cmap = sns.diverging_palette(150, 275, s=80, l=55, n=9, as_cmap=True)
+    fig = plt.figure(figsize=[12, 12])
+    ax = plt.axes()
+    sns.heatmap(
+        stacked_data, ax=ax, cmap=cmap, cbar_kws={"label": "Mitochondrial Length"}
+    )
+    ax.set(xlabel="Number of Mitochondria", ylabel="Sample")
+    fig.subplots_adjust(bottom=0.30, left=0.3)
+
+    if savefig:
+        filename = "".join([data_name, "_mito_dist_", "_.png"])
+        fig.savefig(filename, dpi=300)
+
+    plt.show()
+
+    return data

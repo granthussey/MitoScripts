@@ -464,7 +464,6 @@ def quant_graph_theory(data_dir):
     return cur_graph_per_image_per_mito
 
 
-@timefn
 def analyze_images(data_dir, name_dict=None, data_name="index"):
     """ Runs image analysis on each sample within a data directory
 
@@ -551,7 +550,9 @@ def analyze_images(data_dir, name_dict=None, data_name="index"):
     return full_dataframe
 
 
-def get_indiv_data(data_dir, name_dict=None, data_name="index"):
+def analyze_mitochondrial_length_distribution(
+    data_dir, name_dict=None, data_name="index"
+):
     """ Runs image analysis on each sample within a data directory
 
     Args:
@@ -565,7 +566,7 @@ def get_indiv_data(data_dir, name_dict=None, data_name="index"):
                          (ex: compression_10_21_19)
 
     Returns:
-        pandas df containing data pretaining to the 
+        pandas df containing data pretaining to the distribution of mitochondria within the cell
         
     """
 
@@ -588,3 +589,8 @@ def get_indiv_data(data_dir, name_dict=None, data_name="index"):
         )
 
     return decomposed_dataframe_information
+
+
+def sort_by_treatment_order(df, name_dict):
+
+    return sorted_df
