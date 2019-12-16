@@ -1,2 +1,0 @@
-echo -e "# Requirements for docs\nsphinx==2.2.0" > requirements.txt
-make html
