@@ -7,7 +7,6 @@ import mitographer as mtgrapher
 
 
 def run_2_dim_pca(df, take_sum=True):
-
     x = df.values
 
     pca = PCA(n_components=2)
