@@ -11,7 +11,7 @@ setuptools.setup(
     description="To assist in quantifying mitochondrial morphology",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/granthussey/MitoScripts",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
