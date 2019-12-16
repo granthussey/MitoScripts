@@ -94,11 +94,11 @@ def find_all_filetype(data_dir, extension):
     return path_list
 
 
-def create_edgelist_df(path):
+def create_edgelist_df(gnet_path):
     """ Reads in a path to a .gnet file, produces a df of an edgelist for use in igraph
 
     Args:
-        path (str): This must be a path to a .gnet file
+        gnet_path (str): This must be a path to a .gnet file
 
     Returns:
         df (pandas df): This is an edgelist to be then processed by igraph to create a graph
@@ -106,7 +106,7 @@ def create_edgelist_df(path):
 
     """
 
-    df = pd.read_csv(path, sep="\t").reset_index()
+    df = pd.read_csv(gnet_path, sep="\t").reset_index()
     df = df.rename(columns={"level_0": "Source", "level_1": "Target"})
 
     # edits the third column, which is always the total # of nodes (per MitoGraph coding)
@@ -115,19 +115,19 @@ def create_edgelist_df(path):
     return df
 
 
-def create_automated_mitograph_df(path):
+def create_automated_mitograph_df(mitograph_path):
     """ Creates a cleanly-formatted df containing metrics that are automatic exports from the MitoGraph C code
 
     Args:
-        path (str): path to a .mitograph file
+        mitograph_path (str): path to a .mitograph file
 
     Returns:
         df (pandas df): a cleanly-formatted df of MitoGraph automated outputs
 
     """
 
-    name = remove_extension(path)
-    df = pd.read_csv(path, sep="\t").reset_index()
+    name = remove_extension(mitograph_path)
+    df = pd.read_csv(mitograph_path, sep="\t").reset_index()
     df = df.rename(
         columns={
             "Volume from voxels": "Vol_From_Voxels",
@@ -147,11 +147,11 @@ def create_automated_mitograph_df(path):
     return df
 
 
-def initialize_network(path):
+def initialize_network(gnet_path):
     """ Creates a graph theory network of all mitochondria in an image.
 
     Args:
-        path (str): path to a single gnet file, which contains connectivity data.
+        gnet_path (str): path to a single gnet file, which contains connectivity data.
                     One exists per image.
 
     Returns:
@@ -161,9 +161,6 @@ def initialize_network(path):
     """
 
     def create_map_of_dicts(row):
-        """
-        """
-
         """ for use in creating a list of dictionaries to be turned into pandas df in parent func
         THIS NEEDS TO BE PASSED df.itertuples()
         """
@@ -180,9 +177,9 @@ def initialize_network(path):
 
         return dict_for_igraph
 
-    edgelist_df = create_edgelist_df(path)
+    edgelist_df = create_edgelist_df(gnet_path)
 
-    name = remove_extension(path)
+    name = remove_extension(gnet_path)
     edgelist_df.index.name = name
 
     map_of_dicts = map(create_map_of_dicts, edgelist_df.itertuples())
@@ -194,23 +191,20 @@ def initialize_network(path):
 def decompose_individual_mitochondria(igraph_df_tuple):
     """ Breaks down a whole-image igraph obj into its constituate mitochondria as separate igraph objs
 
-     (Not all mitochondria in the network are connected!)
-
     Args:
         igraph_df_tuple (tuple): a tuple from initialize_network() containing:
             overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
             edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
 
     Returns:
-        ([tuple]): a tuple containing:
+        tuple: a tuple containing:
             overall_network (igraph object): igraph object for a single image. Contains "length" data for each edge.
 
-            edgelist_df (Pandas df): [edgelist for the overall network]
+            edgelist_df (Pandas df): edgelist for the overall network
 
-            combined_mito_dataframe ([Pandas df]): [a pandas dataframe where every row is a single mitochondria in the overall
+            combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall
                                                     network and the columns describe how many nodes, edges, and how long the
-                                                    mitochondria is.]
-
+                                                    mitochondria is
     """
 
     def analyze_each_mitochondria(decomposed_graph, name_from_edgelist):
@@ -412,8 +406,9 @@ def append_conditions(sheet, name_dict, is_for_edgedist=False):
                           This will make anything labeled KRAS_control_001_041 etc named "KRAS_control"
 
         is_for_edgelist (int): this will be False unless set to true by proper function. Treats indices differently.
+
     Returns:
-        sheet (pandas df): updated sheet with
+        sheet (pandas df): updated sheet with appended conditions column
 
     """
 
@@ -430,9 +425,7 @@ def append_conditions(sheet, name_dict, is_for_edgedist=False):
     sheet_adj["Conditions"] = None
 
     for each_replacement in name_dict:
-
         indices_to_replace = [elm for elm in index_list if each_replacement in elm]
-
         for each_index in indices_to_replace:
             sheet_adj.at[each_index, "Conditions"] = name_dict[each_replacement]
 
@@ -589,8 +582,3 @@ def analyze_mitochondrial_length_distribution(
         )
 
     return decomposed_dataframe_information
-
-
-def sort_by_treatment_order(df, name_dict):
-
-    return sorted_df

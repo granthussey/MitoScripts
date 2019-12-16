@@ -14,8 +14,6 @@ DEFAULT_STYLE = "tableau-colorblind10"
 def scattered_box_plot(
     data, column, sample_order, data_name="", ax=None, x="Conditions", logscale=False
 ):
-    """currently working"""
-
     sns.set(style="ticks")
 
     if ax is None:
@@ -85,7 +83,7 @@ def create_graph_suite(data_dir, data_name, name_dict, savefigs=False):
             item.savefig("".join([data_name, "_", cur_col, ".png"]))
             i = i + 1
 
-    return ` cur_data `
+    return cur_data
 
 
 def create_graph_array(cur_data, name_dict, savefigs=False):
