@@ -2,7 +2,7 @@
 // FIRST: Make Tiff files
 
 // Get the root folder containing .nd2 files
-_RootFolder = getDirectory("Choose a Directory");
+_RootFolder = getDirectory("Choose the directory of your .nd2 files");
 
 // Get the list of images to process from chosen directory.
 _List = getFileList(_RootFolder);

@@ -28,15 +28,16 @@ hostname; date
 
 # Get the name of the base directory for naming purposes
 BASEDIR=$(basename "$1")
+USER=gh1431
 
 echo "BASEDIR: "$BASEDIR
 
 # Make a directory for all of the data!
-mkdir /gpfs/scratch/gh1431/Results/$BASEDIR
+mkdir /gpfs/scratch/$USER/Results/$BASEDIR
 
-BATCHDIR=/gpfs/scratch/gh1431/Results/$BASEDIR/Batch
-ORIGDIR=/gpfs/scratch/gh1431/Results/$BASEDIR/Orig
-SEGDIR=/gpfs/scratch/gh1431/Results/$BASEDIR/Segmented
+BATCHDIR=/gpfs/scratch/$USER/Results/$BASEDIR/Batch
+ORIGDIR=/gpfs/scratch/$USER/Results/$BASEDIR/Orig
+SEGDIR=/gpfs/scratch/$USER/Results/$BASEDIR/Segmented
 
 # Make results directories.
 
@@ -65,5 +66,5 @@ DIRS=($1*/)
 sbatch --array=0-$RUN_UNTIL ~/MitoScripts/Shell/run_mitograph.sh "${DIRS[@]}" $SEGDIR
 
 # Copy the results to a results directory for RStudio analysis
-#mkdir /gpfs/scratch/gh1431/Results/Segmented_$BASEDIR
-#find $1 -type f -print0 | xargs -0 cp -t /gpfs/scratch/gh1431/Results/Segmented_$BASEDIR
+#mkdir /gpfs/scratch/$USER/Results/Segmented_$BASEDIR
+#find $1 -type f -print0 | xargs -0 cp -t /gpfs/scratch/$USER/Results/Segmented_$BASEDIR
