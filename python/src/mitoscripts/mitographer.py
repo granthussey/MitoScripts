@@ -1,11 +1,10 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
-from mitodata import analyze_images
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import pandas as pd
 import numpy as np
-import mitodata as mt
+import mitoscripts.mitodata as mt
 
 
 DEFAULT_STYLE = "tableau-colorblind10"
@@ -59,7 +58,7 @@ def scattered_box_plot(
 
 def create_graph_suite(data_dir, data_name, name_dict, savefigs=False):
     """currently working"""
-    cur_data = analyze_images(
+    cur_data = mt.analyze_images(
         data_dir=data_dir, name_dict=name_dict, data_name=data_name
     )
 

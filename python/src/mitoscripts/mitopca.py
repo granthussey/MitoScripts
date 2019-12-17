@@ -3,8 +3,7 @@ from sklearn.decomposition import PCA
 
 import pandas as pd
 import numpy as np
-import mitographer as mtgrapher
-
+import mitoscripts.mitographer as mtgrapher
 
 def run_2_dim_pca(df, take_sum=True):
     x = df.values

@@ -223,4 +223,5 @@ zsdoc/data
 *.png
 .vscode
 
-
+python/dist
+python/mitoscripts.egg-info

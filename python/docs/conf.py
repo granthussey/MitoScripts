@@ -15,7 +15,8 @@ import os  # uncomment
 import sphinx_rtd_theme  # add
 
 sys.path.insert(0, os.path.abspath("../src/mitoscripts"))  # update
-extensions = ["sphinx.ext.autodoc", "sphinx_rtd_theme"]  # update
+extensions = ["sphinx.ext.autodoc", "sphinx_rtd_theme",
+              'sphinx.ext.napoleon']  # update
 html_theme = "sphinx_rtd_theme"  # Change
 
 # -- Project information -----------------------------------------------------
@@ -52,4 +53,4 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
-master_doc = "index"
+# master_doc = "index"

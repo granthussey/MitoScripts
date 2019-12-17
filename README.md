@@ -26,11 +26,11 @@ First, gather the *.gnet* and *.mitograph* files into a single directory. Next, 
 
 As of now, MitoScripts works best if used in scientific mode in an IDE or a jupyter notebook.
 
-`` import mitodata as mt ``
+`` from mitoscripts import mitodata as mt ``
 
-`` import mitographer as mtgrapher ``
+`` from mitoscripts import mitographer as mtgrapher ``
 
-`` import mitopca as mtpca``
+`` from mitoscripts import mitopca as mtpca``
 
 **4. Run the analysis of choice.**
 
@@ -60,7 +60,7 @@ This is the most self-explainatory MitoScripts module. Interface with it to prod
 `scatter_length_distribution` takes `data_dir`, `data_name`, `name_dict`, and `savefigs`. Variable definitions are the same as above. This function will create a heatmap that displays the individual distributions of each image to visualize distribution of lengths in each image's greater mitochondrial network.
 
 
- ## <a name="mitopca"></a>  MitoData module
+ ## <a name="mt"></a>  MitoData module
 
 This is the main backbone of the MitoGrapher module. Of note, there may be one function you'd interface with:
 
@@ -87,7 +87,7 @@ Simiarly, the algorithm checks each loop if you've whittled the DataFrame down b
 
 ### A longer description on `name_dict`
 
- <a name="mitopca"></a> `name_dict` has key:value pairs as filename:treatment_name. For example, lets say you're treating cells with hydrogen peroxide and seeing if there is a change in mitochondrial morphology. You need to save your images in the form of "control_000", "control_001", "control_nnn" and "h2o2_000", "h2o2_001", "h2o2_nnn", then create a name_dict like so: 
+ <a name="name_dic"></a> `name_dict` has key:value pairs as filename:treatment_name. For example, lets say you're treating cells with hydrogen peroxide and seeing if there is a change in mitochondrial morphology. You need to save your images in the form of "control_000", "control_001", "control_nnn" and "h2o2_000", "h2o2_001", "h2o2_nnn", then create a name_dict like so: 
 
 ``
 name_dict = {
@@ -118,5 +118,5 @@ Otherwise, if curious, I have provided here my own ImageJ macros based upon thos
 
 ---
 
-**Dependencies**: matplotlib, seaborn, igraph-python, pandas, numpy, glob, sklearn. Please import these into your environment.
+**Dependencies**: 'numpy', 'pandas', 'scikit-learn', 'python-igraph', 'matplotlib', 'seaborn'. Please import these into your environment.
 

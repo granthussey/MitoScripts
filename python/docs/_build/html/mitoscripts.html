@@ -1,0 +1,594 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mitoscripts package &mdash; MitoScripts beta documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MitoScripts
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">mitoscripts package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-mitoscripts.mitodata">mitoscripts.mitodata module</a></li>
+<li><a class="reference internal" href="#module-mitoscripts.mitographer">mitoscripts.mitographer module</a></li>
+<li><a class="reference internal" href="#module-mitoscripts.mitopca">mitoscripts.mitopca module</a></li>
+<li><a class="reference internal" href="#module-mitoscripts">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MitoScripts</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>mitoscripts package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/mitoscripts.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mitoscripts-package">
+<h1>mitoscripts package<a class="headerlink" href="#mitoscripts-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mitoscripts.mitodata">
+<span id="mitoscripts-mitodata-module"></span><h2>mitoscripts.mitodata module<a class="headerlink" href="#module-mitoscripts.mitodata" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mitoscripts.mitodata.analyze_images">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">analyze_images</code><span class="sig-paren">(</span><em class="sig-param">data_dir</em>, <em class="sig-param">name_dict=None</em>, <em class="sig-param">data_name='index'</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.analyze_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs image analysis on each sample within a data directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dir</strong> (<em>str</em>) – path to where the data is.</p></li>
+<li><p><strong>name_dict</strong> (<em>dict</em>) – dict containing key:value pairs with keys of filename at time of
+acquisition and values of what they should be labeled
+(ex: KRAS_control: KRAS_ctrl)</p></li>
+<li><p><strong>data_name</strong> (<em>str</em>) – an optional name for your dataset, to designate that specific experiment
+(ex: compression_10_21_19)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas df containing a summary of all pertinent data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.analyze_mitochondrial_length_distribution">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">analyze_mitochondrial_length_distribution</code><span class="sig-paren">(</span><em class="sig-param">data_dir</em>, <em class="sig-param">name_dict=None</em>, <em class="sig-param">data_name='index'</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.analyze_mitochondrial_length_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs image analysis on each sample within a data directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dir</strong> (<em>str</em>) – path to where the data is.</p></li>
+<li><p><strong>name_dict</strong> (<em>dict</em>) – dict containing key:value pairs with keys of filename at time of
+acquisition and values of what they should be labeled
+(ex: KRAS_control: KRAS_ctrl)</p></li>
+<li><p><strong>data_name</strong> (<em>str</em>) – an optional name for your dataset, to designate that specific experiment
+(ex: compression_10_21_19)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas df containing data pretaining to the distribution of mitochondria within the cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.append_conditions">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">append_conditions</code><span class="sig-paren">(</span><em class="sig-param">sheet</em>, <em class="sig-param">name_dict</em>, <em class="sig-param">is_for_edgedist=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.append_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add row “Conditions” describing the treatment of each image (+/- drug, +/- compression, etc)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sheet</strong> (<em>pandas df</em>) – existing sheet with data on images from data_dir</p></li>
+<li><p><strong>name_dict</strong> (<em>dict</em>) – <p>dict containing key:value pairs with keys of filename at time of
+acquisition and values of what they should be labeled</p>
+<p>(ex: KRAS_control: KRAS_ctrl, p53_aga: p53_aga)
+This will make anything labeled KRAS_control_001_041 etc named “KRAS_control”</p>
+</p></li>
+<li><p><strong>is_for_edgelist</strong> (<em>int</em>) – this will be False unless set to true by proper function. Treats indices differently.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>updated sheet with appended conditions column</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>sheet (pandas df)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.create_automated_mitograph_df">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">create_automated_mitograph_df</code><span class="sig-paren">(</span><em class="sig-param">mitograph_path</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.create_automated_mitograph_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a cleanly-formatted df containing metrics that are automatic exports from the MitoGraph C code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mitograph_path</strong> (<em>str</em>) – path to a .mitograph file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a cleanly-formatted df of MitoGraph automated outputs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (pandas df)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.create_degree_distribution_df">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">create_degree_distribution_df</code><span class="sig-paren">(</span><em class="sig-param">big_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.create_degree_distribution_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a degree distribution df for processing in the analyze_image() func</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>big_tuple</strong> (<em>tuple</em>) – <p>containing:
+overall_network (igraph object): igraph object for a single image. Contains “length” data for each edge.
+edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
+combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall</p>
+<blockquote>
+<div><p>network and the columns describe how many nodes, edges, and how long the
+mitochondria is.</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe containing data on degree distributions of an image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>degree_dist_df (pandas df)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.create_edgelist_df">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">create_edgelist_df</code><span class="sig-paren">(</span><em class="sig-param">gnet_path</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.create_edgelist_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in a path to a .gnet file, produces a df of an edgelist for use in igraph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gnet_path</strong> (<em>str</em>) – This must be a path to a .gnet file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>This is an edgelist to be then processed by igraph to create a graph</dt><dd><p>theory representation of the mitochondria within that .gnet file’s image</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df (pandas df)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.decompose_individual_mitochondria">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">decompose_individual_mitochondria</code><span class="sig-paren">(</span><em class="sig-param">igraph_df_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.decompose_individual_mitochondria" title="Permalink to this definition">¶</a></dt>
+<dd><p>Breaks down a whole-image igraph obj into its constituate mitochondria as separate igraph objs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>igraph_df_tuple</strong> (<em>tuple</em>) – a tuple from initialize_network() containing:
+overall_network (igraph object): igraph object for a single image. Contains “length” data for each edge.
+edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>a tuple containing:</dt><dd><p>overall_network (igraph object): igraph object for a single image. Contains “length” data for each edge.</p>
+<p>edgelist_df (Pandas df): edgelist for the overall network</p>
+<dl class="simple">
+<dt>combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall</dt><dd><p>network and the columns describe how many nodes, edges, and how long the
+mitochondria is</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.find_all_filetype">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">find_all_filetype</code><span class="sig-paren">(</span><em class="sig-param">data_dir</em>, <em class="sig-param">extension</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.find_all_filetype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all files in a directory, returns their path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dir</strong> (<em>str</em>) – path to where your MitoGraph output data are</p></li>
+<li><p><strong>extension</strong> (<em>str</em>) – the extension to search for (e.g. “.gnet”, “.mitograph”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>a list where each element is a string containing the path for desired files (with extension)</dt><dd><p>(e.g. path_list = [sample1.gnet, sample2.gnet])</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>path_list (list of strings)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.initialize_network">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">initialize_network</code><span class="sig-paren">(</span><em class="sig-param">gnet_path</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.initialize_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a graph theory network of all mitochondria in an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gnet_path</strong> (<em>str</em>) – path to a single gnet file, which contains connectivity data.
+One exists per image.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>a tuple containing:</dt><dd><p>overall_network (igraph object): igraph object for a single image. Contains “length” data for each edge.
+edgelist_df (pandas df) the pandas df a pandas dataframe with the edgelist for the overall network</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(tuple)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.quant_graph_theory">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">quant_graph_theory</code><span class="sig-paren">(</span><em class="sig-param">data_dir</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.quant_graph_theory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps out the analysis for a data_dir of images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – path to where the data is</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a transformation from image file -&gt; per graph per mito analysis</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>map object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.remove_enclosing_dirs">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">remove_enclosing_dirs</code><span class="sig-paren">(</span><em class="sig-param">full_path</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.remove_enclosing_dirs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove any directories in a filepath</p>
+<p>If you pass a filename to this function, meaning it doesn’t
+contain the “/” string, it will simply return the input back to you.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>full_path</strong> (<em>str</em>) – a Unix-based path to a file (with extension)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>just the filename (with extension) from the path</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>filename (string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.remove_extension">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">remove_extension</code><span class="sig-paren">(</span><em class="sig-param">string</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.remove_extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the extention from a string, as well as the directories.</p>
+<p>This function may fail if more than one . is in the file, such as “.tar.gz”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> – (string): either a path or a filename that for a specific file, with extension.
+(e.g. /usr/dir/sample.mitograph or sample.mitograph)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>just the filename without the extension (e.g. “sample”)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>filename_without_extension (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.summarize_image">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">summarize_image</code><span class="sig-paren">(</span><em class="sig-param">big_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.summarize_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a big tuple filled with data about a specific image, then summarizes it into a single pandas df row</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>big_tuple</strong> (<em>tuple</em>) – <p>containing:
+overall_network (igraph object): igraph object for a single image. Contains “length” data for each edge.
+edgelist_df (Pandas df): a pandas dataframe with the edgelist for the overall network
+combined_mito_dataframe (Pandas df): a pandas dataframe where every row is a single mitochondria in the overall</p>
+<blockquote>
+<div><p>network and the columns describe how many nodes, edges, and how long the
+mitochondria is.</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a single row to be concatonated later filled with metrics on a specific image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>summary_dataframe (pandas df)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitodata.timefn">
+<code class="sig-prename descclassname">mitoscripts.mitodata.</code><code class="sig-name descname">timefn</code><span class="sig-paren">(</span><em class="sig-param">fn</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitodata.timefn" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapper to time the enclosed function</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mitoscripts.mitographer">
+<span id="mitoscripts-mitographer-module"></span><h2>mitoscripts.mitographer module<a class="headerlink" href="#module-mitoscripts.mitographer" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mitoscripts.mitographer.clean_df_and_get_corr">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">clean_df_and_get_corr</code><span class="sig-paren">(</span><em class="sig-param">df</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.clean_df_and_get_corr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.clustermap">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">clustermap</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">title=''</em>, <em class="sig-param">data_name=''</em>, <em class="sig-param">savefig=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.clustermap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.create_graph_array">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">create_graph_array</code><span class="sig-paren">(</span><em class="sig-param">cur_data</em>, <em class="sig-param">name_dict</em>, <em class="sig-param">savefigs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.create_graph_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>currently not working</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.create_graph_suite">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">create_graph_suite</code><span class="sig-paren">(</span><em class="sig-param">data_dir</em>, <em class="sig-param">data_name</em>, <em class="sig-param">name_dict</em>, <em class="sig-param">savefigs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.create_graph_suite" title="Permalink to this definition">¶</a></dt>
+<dd><p>currently working</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.get_default_col_to_drop">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">get_default_col_to_drop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.get_default_col_to_drop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.heatmap">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">heatmap</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">title=''</em>, <em class="sig-param">data_name=''</em>, <em class="sig-param">savefig=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.heatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.make_centroid_plot">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">make_centroid_plot</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">to_drop=None</em>, <em class="sig-param">style='tableau-colorblind10'</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.make_centroid_plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.make_pca_plot">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">make_pca_plot</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">to_drop=None</em>, <em class="sig-param">style='tableau-colorblind10'</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.make_pca_plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.make_scree_plot">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">make_scree_plot</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">to_drop=None</em>, <em class="sig-param">style='tableau-colorblind10'</em>, <em class="sig-param">n_comp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.make_scree_plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.pca_suite">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">pca_suite</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">to_drop=None</em>, <em class="sig-param">style='tableau-colorblind10'</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.pca_suite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.run_pca">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">run_pca</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">to_drop=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.run_pca" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.scatter_length_distribution">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">scatter_length_distribution</code><span class="sig-paren">(</span><em class="sig-param">data_dir</em>, <em class="sig-param">name_dict</em>, <em class="sig-param">data_name=''</em>, <em class="sig-param">savefig=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.scatter_length_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitographer.scattered_box_plot">
+<code class="sig-prename descclassname">mitoscripts.mitographer.</code><code class="sig-name descname">scattered_box_plot</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">column</em>, <em class="sig-param">sample_order</em>, <em class="sig-param">data_name=''</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">x='Conditions'</em>, <em class="sig-param">logscale=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitographer.scattered_box_plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-mitoscripts.mitopca">
+<span id="mitoscripts-mitopca-module"></span><h2>mitoscripts.mitopca module<a class="headerlink" href="#module-mitoscripts.mitopca" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mitoscripts.mitopca.force_50_50_axes">
+<code class="sig-prename descclassname">mitoscripts.mitopca.</code><code class="sig-name descname">force_50_50_axes</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">min_cols=6</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitopca.force_50_50_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Currently not working</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitopca.remove_dissimilarity">
+<code class="sig-prename descclassname">mitoscripts.mitopca.</code><code class="sig-name descname">remove_dissimilarity</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">threshold=0.95</em>, <em class="sig-param">min_cols=6</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitopca.remove_dissimilarity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitopca.run_2_dim_pca">
+<code class="sig-prename descclassname">mitoscripts.mitopca.</code><code class="sig-name descname">run_2_dim_pca</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">take_sum=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitopca.run_2_dim_pca" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="mitoscripts.mitopca.run_special_pca">
+<code class="sig-prename descclassname">mitoscripts.mitopca.</code><code class="sig-name descname">run_special_pca</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">threshold=0.95</em>, <em class="sig-param">min_cols=6</em><span class="sig-paren">)</span><a class="headerlink" href="#mitoscripts.mitopca.run_special_pca" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-mitoscripts">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mitoscripts" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Grant Hussey
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
